@@ -1,12 +1,16 @@
 package org.os.bayturabackend.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.os.bayturabackend.dto.MediaResponse;
 import org.os.bayturabackend.dto.PropertyRequest;
 import org.os.bayturabackend.dto.PropertyResponse;
 import org.os.bayturabackend.entities.Media;
+import org.os.bayturabackend.repositories.MediaRepository;
+import org.os.bayturabackend.services.MediaService;
 import org.os.bayturabackend.services.PropertyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,6 +19,7 @@ import java.util.List;
 @RequestMapping("api/properties")
 public class PropertyController {
     private final PropertyService propertyService;
+    private final MediaService mediaService;
 
 
     /**
@@ -89,12 +94,36 @@ public class PropertyController {
 
 
 //    @PostMapping("/compare")
-//
-//    @PostMapping("/media")
-//    ResponseEntity<PropertyResponse> uploadMedia(Media media) {}
-//
-//    @DeleteMapping("/{id}/media/{id)")
-//    String deleteMedia() {}
+//    ResponseEntity<PropertyResponse> compareProperty(@RequestBody PropertyRequest property) {}
+
+    @PostMapping("/{id}/media-upload")
+    public ResponseEntity<PropertyResponse> uploadMedia(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        mediaService.addMedia(id, file);
+        return ResponseEntity.ok(propertyService.getProperty(id));
+    }
+
+    @GetMapping("/media/{id}")
+    public ResponseEntity<MediaResponse> getMedia(@PathVariable Long id) {
+        return ResponseEntity.ok(mediaService.getMedia(id));
+    }
+
+    @GetMapping("/{id}/media")
+    public ResponseEntity<List<MediaResponse>> getMediaOfProperty(@PathVariable Long id) {
+        return ResponseEntity.ok(mediaService.getMediaOfProperty(id));
+    }
+
+    @DeleteMapping("/{propertyId}/media/{mediaId}")
+    public ResponseEntity<String> deleteMedia(
+            @PathVariable Long propertyId,
+            @PathVariable Long mediaId
+    ) {
+        mediaService.deleteMedia(mediaId);
+        return ResponseEntity.ok("Media deleted successfully.");
+    }
+
 
 
 }

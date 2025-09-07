@@ -9,21 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface MediaRepository extends JpaRepository<Media, Long> {
-    @Override
-    void delete(Media entity);
+    List<Media> findByPropertyDetails_Id(Long propertyId);
 
-    @Override
-    void deleteAll();
-
-    @Override
-    void deleteById(Long aLong);
-
-    @Override
-    Optional<Media> findById(Long aLong);
-
-    @Override
-    List<Media> findAllById(Iterable<Long> longs);
-
-    @Override
-    <S extends Media> S save(S entity);
 }

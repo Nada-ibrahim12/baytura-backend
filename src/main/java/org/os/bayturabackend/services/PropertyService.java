@@ -41,6 +41,12 @@ public class PropertyService {
         return mapToDTO(property);
 
     }
+    public Property getPropertyEntity(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
+        return property;
+
+    }
 
     // post property
     public PropertyResponse createProperty(PropertyRequest propertyRequest) {
