@@ -5,6 +5,7 @@ import org.os.bayturabackend.dto.MediaResponse;
 import org.os.bayturabackend.dto.PropertyRequest;
 import org.os.bayturabackend.dto.PropertyResponse;
 import org.os.bayturabackend.entities.Media;
+import org.os.bayturabackend.entities.PropertyStatus;
 import org.os.bayturabackend.repositories.MediaRepository;
 import org.os.bayturabackend.services.MediaService;
 import org.os.bayturabackend.services.PropertyService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -91,6 +93,25 @@ public class PropertyController {
     public ResponseEntity<String> deleteProperty(@PathVariable Long id) {
         return ResponseEntity.ok(propertyService.deleteProperty(id));
     }
+
+    @PutMapping("/{id}/property-available")
+    public ResponseEntity<PropertyResponse> propertyAvailable(@PathVariable Long id) {
+        return ResponseEntity.ok(propertyService.makePropertyAvailable(id));
+    }
+
+    @PutMapping("/{id}/change-status")
+    public ResponseEntity<PropertyResponse> changeStatus(
+            @PathVariable Long id,
+            @RequestBody PropertyStatus status
+    ) {
+        try {
+            PropertyResponse updatedProperty = propertyService.changeStatus(id, status);
+            return ResponseEntity.ok(updatedProperty);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
 
 //    @PostMapping("/compare")

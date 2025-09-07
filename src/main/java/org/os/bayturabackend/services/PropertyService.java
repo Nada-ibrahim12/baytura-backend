@@ -98,6 +98,22 @@ public class PropertyService {
         return "Property deleted successfully";
     }
 
+    // set property available
+    public PropertyResponse makePropertyAvailable(Long id) {
+        Property property = propertyRepository.findById(id).orElseThrow(() -> new RuntimeException("Property not found"));
+        property.setPropertyStatus(PropertyStatus.AVAILABLE);
+        propertyRepository.save(property);
+        return mapToDTO(property);
+    }
+
+    // change property status
+    public PropertyResponse changeStatus(Long id, PropertyStatus status) {
+        Property property = propertyRepository.findById(id).orElseThrow(() -> new RuntimeException("Property not found"));
+        property.setPropertyStatus(status);
+        propertyRepository.save(property);
+        return mapToDTO(property);
+    }
+
 
     public PropertyResponse mapToDTO(Property property) {
         PropertyResponse dto = new PropertyResponse();
