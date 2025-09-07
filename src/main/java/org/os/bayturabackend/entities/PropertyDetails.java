@@ -1,34 +1,51 @@
 package org.os.bayturabackend.entities;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "property_details")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PropertyDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "property_details_id")
     private Long id;
 
-    @Column(length = 2000)
+    @Column(length = 100, nullable = false)
+    private String title;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PropertyType type;
+
+    @Column(length = 2000 ,nullable = false)
     private String description;
 
-    @NotNull
-    private Double size;
+    @Column(nullable = false)
+    private double price;
 
-    private Integer bedrooms;
-    private Integer bathrooms;
+    @Column(nullable = false)
+    private Double area;
 
-    private Boolean hasGarage;
-    private Boolean hasGarden;
-    private Boolean hasSwimmingPool;
+    @Column(nullable = false)
+    private String address;
 
-    @OneToOne
-    @JoinColumn(name = "property_id", nullable = false, unique = true)
-    private Property property;
+    @Column(precision = 10, scale = 8)
+    private BigDecimal latitude;
+
+    @Column(precision = 11, scale = 8)
+    private BigDecimal longitude;
+
 
     @OneToMany(mappedBy = "propertyDetails", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PropertyImage> images = new ArrayList<>();
+    private List<Media> images = new ArrayList<>();
 }
