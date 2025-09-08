@@ -16,6 +16,9 @@ public class Application {
         System.setProperty("API_PORT", dotenv.get("API_PORT"));
         System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
         System.setProperty("JWT_EXPIRATION", dotenv.get("JWT_EXPIRATION"));
+        System.setProperty("CLOUDINARY_CLOUD_NAME", dotenv.get("CLOUDINARY_CLOUD_NAME"));
+        System.setProperty("CLOUDINARY_API_KEY", dotenv.get("CLOUDINARY_API_KEY"));
+        System.setProperty("CLOUDINARY_API_SECRET", dotenv.get("CLOUDINARY_API_SECRET"));
 
         SpringApplication.run(Application.class, args);
     }
