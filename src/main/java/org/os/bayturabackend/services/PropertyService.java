@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -113,6 +114,45 @@ public class PropertyService {
         propertyRepository.save(property);
         return mapToDTO(property);
     }
+
+    public List<PropertyResponse> search(String query) {
+        String lowerCaseQuery = query.toLowerCase();
+        List<Property> properties = propertyRepository.findAll();
+
+        return properties.stream()
+                .filter(property ->
+                        property.getTitle().toLowerCase().contains(lowerCaseQuery) ||
+                                property.getDescription().toLowerCase().contains(lowerCaseQuery) ||
+                                property.getAddress().toLowerCase().contains(lowerCaseQuery)
+                ).map(property -> mapToDTO(property))
+                .collect(Collectors.toList());
+    }
+
+
+    public List<PropertyResponse> filter(
+            String type,
+            Double minPrice, Double maxPrice,
+            Double minArea, Double maxArea,
+            String owner
+    ) {
+        List<Property> properties = propertyRepository.findAll();
+
+        return properties.stream()
+                .filter(p -> type == null || p.getType().name().equalsIgnoreCase(type))
+                .filter(p -> (minPrice == null || p.getPrice() >= minPrice) &&
+                        (maxPrice == null || p.getPrice() <= maxPrice))
+                .filter(p -> (minArea == null || p.getArea() >= minArea) &&
+                        (maxArea == null || p.getArea() <= maxArea))
+                .filter(p -> owner == null ||
+                        (p.getOwner() != null &&
+                                ((p.getOwner().getFirstName() != null && p.getOwner().getFirstName().equalsIgnoreCase(owner)) ||
+                                        (p.getOwner().getLastName() != null && p.getOwner().getLastName().equalsIgnoreCase(owner)))
+                        )
+                )
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
 
 
     public PropertyResponse mapToDTO(Property property) {
