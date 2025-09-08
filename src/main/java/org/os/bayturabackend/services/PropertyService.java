@@ -1,8 +1,8 @@
 package org.os.bayturabackend.services;
 
 import lombok.RequiredArgsConstructor;
-import org.os.bayturabackend.dto.PropertyRequest;
-import org.os.bayturabackend.dto.PropertyResponse;
+import org.os.bayturabackend.DTOs.PropertyRequest;
+import org.os.bayturabackend.DTOs.PropertyResponse;
 import org.os.bayturabackend.entities.Property;
 import org.os.bayturabackend.entities.PropertyStatus;
 import org.os.bayturabackend.entities.Role;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

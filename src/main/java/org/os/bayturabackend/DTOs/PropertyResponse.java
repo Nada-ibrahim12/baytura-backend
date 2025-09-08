@@ -1,11 +1,9 @@
-package org.os.bayturabackend.dto;
+package org.os.bayturabackend.DTOs;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.os.bayturabackend.entities.Media;
 import org.os.bayturabackend.entities.PropertyStatus;
 import org.os.bayturabackend.entities.PropertyType;
-import org.os.bayturabackend.entities.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

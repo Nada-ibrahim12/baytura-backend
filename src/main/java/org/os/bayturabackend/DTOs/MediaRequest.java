@@ -1,4 +1,4 @@
-package org.os.bayturabackend.dto;
+package org.os.bayturabackend.DTOs;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 

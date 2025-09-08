@@ -3,8 +3,7 @@ package org.os.bayturabackend.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
-import org.os.bayturabackend.dto.MediaResponse;
-import org.os.bayturabackend.dto.PropertyResponse;
+import org.os.bayturabackend.DTOs.MediaResponse;
 import org.os.bayturabackend.entities.Media;
 import org.os.bayturabackend.entities.Property;
 import org.os.bayturabackend.repositories.MediaRepository;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

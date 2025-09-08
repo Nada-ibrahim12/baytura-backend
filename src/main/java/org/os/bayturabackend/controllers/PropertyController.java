@@ -1,20 +1,16 @@
 package org.os.bayturabackend.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.os.bayturabackend.dto.MediaResponse;
-import org.os.bayturabackend.dto.PropertyRequest;
-import org.os.bayturabackend.dto.PropertyResponse;
-import org.os.bayturabackend.entities.Media;
+import org.os.bayturabackend.DTOs.MediaResponse;
+import org.os.bayturabackend.DTOs.PropertyRequest;
+import org.os.bayturabackend.DTOs.PropertyResponse;
 import org.os.bayturabackend.entities.PropertyStatus;
-import org.os.bayturabackend.repositories.MediaRepository;
 import org.os.bayturabackend.services.MediaService;
 import org.os.bayturabackend.services.PropertyService;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
