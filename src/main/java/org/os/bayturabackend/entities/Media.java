@@ -19,7 +19,7 @@ public class Media {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 500)
     private String url;
 
     @NotBlank
@@ -29,4 +29,7 @@ public class Media {
     @ManyToOne
     @JoinColumn(name = "property_details_id", nullable = false)
     private PropertyDetails propertyDetails;
+
+    @Column(name = "public_id", nullable = false, unique = true)
+    private String publicId;
 }
