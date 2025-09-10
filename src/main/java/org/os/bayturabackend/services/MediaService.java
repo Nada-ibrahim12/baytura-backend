@@ -6,7 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.os.bayturabackend.DTOs.MediaResponse;
 import org.os.bayturabackend.entities.Media;
 import org.os.bayturabackend.entities.Property;
+import org.os.bayturabackend.exceptions.ResourceNotFoundException;
+import org.os.bayturabackend.mappers.MediaMapper;
 import org.os.bayturabackend.repositories.MediaRepository;
+import org.os.bayturabackend.repositories.PropertyRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +24,7 @@ import java.util.Map;
 public class MediaService {
 
     private final MediaRepository mediaRepository;
-    private final PropertyService propertyService;
+    private final PropertyRepository propertyRepository;
     private final Cloudinary cloudinary;
 
     public String uploadFile(MultipartFile file) throws IOException {
@@ -29,15 +33,23 @@ public class MediaService {
         return uploadResult.get("secure_url").toString();
     }
 
-    public MediaResponse addMedia(Long propertyId, MultipartFile file) {
+    public MediaResponse addMedia(Long propertyId, MultipartFile file , Long ownerId) {
         try {
+
+            Property property = propertyRepository.findById(propertyId)
+                    .orElseThrow(
+                            () -> new RuntimeException("Property not found")
+                    );
+
+            if (!property.getOwner().getUserId().equals(ownerId)) {
+                throw new RuntimeException("You are not allowed to upload media to this property");
+            }
+
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
                     ObjectUtils.asMap("resource_type", "auto"));
 
             String url = uploadResult.get("secure_url").toString();
             String publicId = uploadResult.get("public_id").toString();
-
-            Property property = propertyService.getPropertyEntity(propertyId);
 
             Media media = new Media();
             media.setUrl(url);
@@ -47,9 +59,10 @@ public class MediaService {
 
             Media saved = mediaRepository.save(media);
 
-            return mapToDTO(saved);
+            return MediaMapper.toDto(saved);
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException("File upload failed: " + e.getMessage());
         }
     }
@@ -58,7 +71,7 @@ public class MediaService {
         List<Media> allMedia = mediaRepository.findByPropertyDetails_Id(propertyId);
         List<MediaResponse> mediaResponses = new ArrayList<>();
         for (Media media : allMedia) {
-            mediaResponses.add(mapToDTO(media));
+            mediaResponses.add(MediaMapper.toDto(media));
         }
         return mediaResponses;
     }
@@ -66,15 +79,29 @@ public class MediaService {
     public MediaResponse getMedia(Long mediaId) {
         Media media = mediaRepository.findById(mediaId)
                 .orElseThrow(() -> new RuntimeException("Media not found with id: " + mediaId));
-        return mapToDTO(media);
+        return MediaMapper.toDto(media);
     }
 
-    public String deleteMedia(Long mediaId) {
+    public String deleteMedia(Long mediaId , Long ownerId , Long propertyId) {
         Media media = mediaRepository.findById(mediaId)
-                .orElseThrow(() -> new RuntimeException("Media not found with id: " + mediaId));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Media not found with id: " + mediaId)
+                );
+
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(
+                    () -> new ResourceNotFoundException("Property not found with id: " + propertyId)
+                );
+
+        if (!property.getOwner().getUserId().equals(ownerId)) {
+            throw new AccessDeniedException("You are not allowed to delete this media");
+        }
+
+        if (!media.getPropertyDetails().getId().equals(propertyId)) {
+            throw new AccessDeniedException("You are not allowed to delete this media");
+        }
 
         try {
-            // delete from cloudinary as well
             cloudinary.uploader().destroy(media.getPublicId(), ObjectUtils.emptyMap());
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete media from Cloudinary: " + e.getMessage());
@@ -82,14 +109,5 @@ public class MediaService {
 
         mediaRepository.delete(media);
         return "Media deleted successfully";
-    }
-
-    private MediaResponse mapToDTO(Media media) {
-        MediaResponse dto = new MediaResponse();
-        dto.setId(media.getId());
-        dto.setUrl(media.getUrl());
-        dto.setAltName(media.getAltName());
-        dto.setPublicId(media.getPublicId());
-        return dto;
     }
 }

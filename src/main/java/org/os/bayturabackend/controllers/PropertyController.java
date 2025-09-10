@@ -1,13 +1,16 @@
 package org.os.bayturabackend.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.os.bayturabackend.DTOs.ChangeStatusDTO;
 import org.os.bayturabackend.DTOs.MediaResponse;
-import org.os.bayturabackend.DTOs.PropertyRequest;
-import org.os.bayturabackend.DTOs.PropertyResponse;
-import org.os.bayturabackend.entities.PropertyStatus;
+import org.os.bayturabackend.DTOs.PropertyRequestDTO;
+import org.os.bayturabackend.DTOs.PropertyResponseDTO;
+import org.os.bayturabackend.entities.User;
 import org.os.bayturabackend.services.MediaService;
 import org.os.bayturabackend.services.PropertyService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,165 +18,17 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/properties")
+@RequestMapping("api/")
 public class PropertyController {
     private final PropertyService propertyService;
     private final MediaService mediaService;
 
 
-    // Property Endpoints
-
-    /**
-     Create a new property listing
-     🔹 POSTMAN Example:
-     URL: POST http://localhost:8080/api/properties
-     Body (JSON):
-     {
-     "title": "Luxury Villa",
-     "description": "Sea view, 5 bedrooms",
-     "type": "VILLA",
-     "price": 2500000,
-     "area": 450.0,
-     "address": "North Coast, Egypt",
-     "owner": { "id": 1 }
-     }
-    */
-    @PostMapping
-    public ResponseEntity<PropertyResponse> addProperty(@RequestBody PropertyRequest property) {
-        return ResponseEntity.ok(propertyService.createProperty(property));
-    }
-
-    /**
-     Get all property listings
-     🔹 POSTMAN Example:
-     URL: GET http://localhost:8080/api/properties
-    */
-    @GetMapping
-    public ResponseEntity<List<PropertyResponse>> getAllProperties() {
-        return ResponseEntity.ok(propertyService.allProperties());
-    }
-
-    /**
-     Get a single property by ID
-     🔹 POSTMAN Example:
-     URL: GET http://localhost:8080/api/properties/1
-    */
-    @GetMapping("/{id}")
-    public ResponseEntity<PropertyResponse> getProperty(@PathVariable Long id) {
-        return ResponseEntity.ok(propertyService.getProperty(id));
-    }
-
-    /**
-     Update an existing property
-     🔹 POSTMAN Example:
-     URL: PUT http://localhost:8080/api/properties/1
-     Body (JSON):
-     {
-     "title": "Updated Villa",
-     "description": "Now with pool",
-     "type": "VILLA",
-     "price": 2700000,
-     "area": 470.0,
-     "address": "North Coast, Egypt",
-     "owner": { "id": 1 }
-     }
-    */
-    @PutMapping("/{id}")
-    public ResponseEntity<PropertyResponse> editProperty(@PathVariable Long id, @RequestBody PropertyRequest property) {
-        return ResponseEntity.ok(propertyService.updateProperty(id, property));
-    }
-
-    /**
-     Delete a property by ID
-     🔹 POSTMAN Example:
-     URL: DELETE http://localhost:8080/api/properties/1
-    */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProperty(@PathVariable Long id) {
-        return ResponseEntity.ok(propertyService.deleteProperty(id));
-    }
-
-    // Status Endpoints
-    @PutMapping("/{id}/property-available")
-    public ResponseEntity<PropertyResponse> propertyAvailable(@PathVariable Long id) {
-        return ResponseEntity.ok(propertyService.makePropertyAvailable(id));
-    }
-
-    @PutMapping("/{id}/change-status")
-    public ResponseEntity<PropertyResponse> changeStatus(
-            @PathVariable Long id,
-            @RequestBody PropertyStatus status
-    ) {
-        try {
-            PropertyResponse updatedProperty = propertyService.changeStatus(id, status);
-            return ResponseEntity.ok(updatedProperty);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-
-//    @PostMapping("/compare")
-//    ResponseEntity<PropertyResponse> compareProperty(@RequestBody PropertyRequest property) {}
-
-
-    // Media Endpoints
-    @PostMapping("/{id}/media-upload")
-    public ResponseEntity<PropertyResponse> uploadMedia(
-            @PathVariable Long id,
-            @RequestParam("file") MultipartFile file
-    ) {
-        mediaService.addMedia(id, file);
-        return ResponseEntity.ok(propertyService.getProperty(id));
-    }
-
-    @GetMapping("/media/{id}")
-    public ResponseEntity<MediaResponse> getMedia(@PathVariable Long id) {
-        return ResponseEntity.ok(mediaService.getMedia(id));
-    }
-
-    @GetMapping("/{id}/media")
-    public ResponseEntity<List<MediaResponse>> getMediaOfProperty(@PathVariable Long id) {
-        return ResponseEntity.ok(mediaService.getMediaOfProperty(id));
-    }
-
-    @DeleteMapping("/{propertyId}/media/{mediaId}")
-    public ResponseEntity<String> deleteMedia(
-            @PathVariable Long propertyId,
-            @PathVariable Long mediaId
-    ) {
-        mediaService.deleteMedia(mediaId);
-        return ResponseEntity.ok("Media deleted successfully.");
-    }
-
-    // Search and Filters Endpoints
-
-    /**
-     Search properties by keyword (title, description, or address).
-
-     🔹 POSTMAN Example:
-     URL: GET http://localhost:8080/api/properties/search
-     Body (Raw text):
-     "villa"
-
-     This will return all properties where the title, description, or address contains "villa".
-    */
-    @GetMapping("/search")
-    public ResponseEntity<List<PropertyResponse>> searchProperties(@RequestParam  String query) {
-        return ResponseEntity.ok(propertyService.search(query));
-    }
-
-    /**
-     Filter properties by optional criteria (type, price, area, owner.....).
-    
-     🔹 POSTMAN Examples:
-     Combine filters:
-     GET /api/properties/filter?type=VILLA&minPrice=1000000&maxPrice=3000000
-     GET /api/properties/filter?owner=Nada&maxPrice=2500000
-     */
-    @GetMapping("/filter")
-    public ResponseEntity<List<PropertyResponse>> filterProperties(
+    // ? for all users
+    @GetMapping("properties")
+    public ResponseEntity<List<PropertyResponseDTO>> getProperties(
             @RequestParam(required = false) String type,
+            @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minArea,
@@ -181,8 +36,145 @@ public class PropertyController {
             @RequestParam(required = false) String owner
     ) {
         return ResponseEntity.ok(
-                propertyService.filter(type, minPrice, maxPrice, minArea, maxArea, owner)
+                propertyService.getProperties(
+                        type,
+                        search,
+                        minPrice,
+                        maxPrice,
+                        minArea,
+                        maxArea,
+                        owner
+                )
         );
+    }
+
+
+    // ? for all users
+    @GetMapping("properties/{id}")
+    public ResponseEntity<PropertyResponseDTO> getPropertyById(@PathVariable Long id) {
+        return ResponseEntity.ok(propertyService.getPropertyById(id));
+    }
+
+
+    // ? provider and customer (get the properties he owns)
+    @GetMapping("properties/my")
+    @PreAuthorize("hasAnyRole('PROVIDER','CUSTOMER')")
+    public ResponseEntity<List<PropertyResponseDTO>> getMyProperties(Authentication auth){
+        User user = (User)auth.getPrincipal();
+        Long userId = user.getUserId();
+        return ResponseEntity.ok(propertyService.getMyProperties(userId));
+    }
+
+
+    // ? provider only
+    @PostMapping("properties")
+    @PreAuthorize("hasRole('PROVIDER')")
+    public ResponseEntity<PropertyResponseDTO> createProperty(
+            Authentication auth,
+            @RequestBody PropertyRequestDTO propertyRequestDTO){
+        User user = (User)auth.getPrincipal();
+        Long OwnerId = user.getUserId();
+        return ResponseEntity.ok(propertyService.createProperty(propertyRequestDTO, OwnerId));
+    }
+
+    // ? provider and customer (update the properties he owns)
+    @PutMapping("properties/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER','CUSTOMER')")
+    public ResponseEntity<PropertyResponseDTO> updateProperty(
+            Authentication auth,
+            @PathVariable Long id,
+            @RequestBody PropertyRequestDTO propertyRequestDTO){
+        User user = (User)auth.getPrincipal();
+        Long OwnerId = user.getUserId();
+        return ResponseEntity.ok(propertyService.updateProperty(id, propertyRequestDTO, OwnerId));
+    }
+
+
+    @PutMapping("properties/{id}/change-status")
+    @PreAuthorize("hasAnyRole('PROVIDER','CUSTOMER')")
+    public ResponseEntity<PropertyResponseDTO> changePropertyStatus(
+            Authentication auth,
+            @PathVariable Long id,
+            @RequestBody ChangeStatusDTO changeStatusDTO){
+        User user = (User)auth.getPrincipal();
+        Long ownerId = user.getUserId();
+        return ResponseEntity.ok(
+                propertyService.updatePropertyStatus(
+                        id,
+                        changeStatusDTO.getStatus(),
+                        ownerId
+                )
+        );
+    }
+
+
+    @DeleteMapping("properties/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER' , 'CUSTOMER')")
+    public ResponseEntity<String> deletePropertyOwner(
+            Authentication auth,
+            @PathVariable Long id
+    ){
+        User user = (User)auth.getPrincipal();
+        Long ownerId = user.getUserId();
+        propertyService.deletePropertyOwner(id, ownerId);
+        return ResponseEntity.ok("Property deleted successfully.");
+    }
+
+    @DeleteMapping("admin/properties/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deletePropertyAdmin(
+            @PathVariable Long id
+    ){
+        propertyService.deletePropertyAdmin(id);
+        return ResponseEntity.ok("Property deleted successfully.");
+    }
+
+//    ! =========================================================================================================================
+
+    // ? Media Endpoints
+
+
+    // ? provider and customer (upload the media he owns)
+    @PostMapping("properties/{id}/media-upload")
+    @PreAuthorize("hasAnyRole('PROVIDER','CUSTOMER')")
+    public ResponseEntity<PropertyResponseDTO> uploadMedia(
+            Authentication auth,
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        User user = (User)auth.getPrincipal();
+        Long OwnerId = user.getUserId();
+        mediaService.addMedia(id, file, OwnerId);
+        return ResponseEntity.ok(propertyService.getPropertyById(id));
+    }
+
+
+    // ? for all users
+    @GetMapping("properties/media/{id}")
+    public ResponseEntity<MediaResponse> getMedia(@PathVariable Long id) {
+        return ResponseEntity.ok(mediaService.getMedia(id));
+    }
+
+
+    // ? for all users
+    @GetMapping("properties/{id}/media")
+    public ResponseEntity<List<MediaResponse>> getMediaOfProperty(@PathVariable Long id) {
+        return ResponseEntity.ok(mediaService.getMediaOfProperty(id));
+    }
+
+
+    // ? provider and customer (delete the media he owns)
+    @DeleteMapping("properties/{propertyId}/media/{mediaId}")
+    @PreAuthorize("hasAnyRole('PROVIDER','CUSTOMER')")
+    public ResponseEntity<String> deleteMedia(
+            Authentication auth,
+            @PathVariable Long propertyId,
+            @PathVariable Long mediaId
+    ) {
+        User user = (User)auth.getPrincipal();
+        Long OwnerId = user.getUserId();
+        mediaService.deleteMedia(mediaId , OwnerId , propertyId);
+        return ResponseEntity.ok("Media deleted successfully.");
     }
 
 
