@@ -3,6 +3,7 @@ package org.os.bayturabackend.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -51,7 +52,8 @@ public abstract class User implements UserDetails {
     private String phone;
 
     @Column(name = "profile_picture_url")
-    private String profilePictureUrl;
+    @Builder.Default
+    private String profilePictureUrl = "https://github.com/user-attachments/assets/e4c05593-81cc-4aca-b8e6-571128095fbc" ;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
