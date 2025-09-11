@@ -55,6 +55,9 @@ public abstract class User implements UserDetails {
     @Builder.Default
     private String profilePictureUrl = "https://github.com/user-attachments/assets/e4c05593-81cc-4aca-b8e6-571128095fbc" ;
 
+    @Column(name = "profile_picture_id")
+    private String profilePictureId;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
