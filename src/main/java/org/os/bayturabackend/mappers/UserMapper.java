@@ -66,7 +66,7 @@ public class UserMapper {
             return null;
         }
         UserResponseDTO dto = new UserResponseDTO();
-        dto.setUsername(user.getUsername());
+        dto.setUsername(user.getRealUsername());
         dto.setEmail(user.getEmail());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
@@ -81,7 +81,7 @@ public class UserMapper {
             return null;
         }
         ProviderResponseDTO dto = new ProviderResponseDTO();
-        dto.setUsername(provider.getUsername());
+        dto.setUsername(provider.getRealUsername());
         dto.setEmail(provider.getEmail());
         dto.setFirstName(provider.getFirstName());
         dto.setLastName(provider.getLastName());
