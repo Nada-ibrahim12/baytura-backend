@@ -2,45 +2,65 @@ package org.os.bayturabackend.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.os.bayturabackend.DTOs.PropertyRequestDTO;
-import org.os.bayturabackend.DTOs.PropertyResponseDTO;
+import org.os.bayturabackend.DTOs.*;
 import org.os.bayturabackend.entities.*;
 import org.os.bayturabackend.exceptions.ForbiddenException;
 import org.os.bayturabackend.exceptions.ResourceNotFoundException;
 import org.os.bayturabackend.mappers.PropertyMapper;
-import org.os.bayturabackend.repositories.PropertyRepository;
-import org.os.bayturabackend.repositories.UserRepository;
+import org.os.bayturabackend.repositories.*;
 import org.os.bayturabackend.specifications.PropertySpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
-
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class PropertyService {
     private final PropertyRepository propertyRepository;
-    private final PropertyMapper propertyMapper;
     private final UserRepository userRepository;
+    private final SearchHistoryRepository searchHistoryRepository;
+    private final CustomerRepository customerRepository;
+    private final FavoriteRepository favoriteRepository;
 
     public List<PropertyResponseDTO> getProperties(
             String type,
+            String purpose,
             String query,
             Double minPrice, Double maxPrice,
             Double minArea, Double maxArea,
-            String username
+            String username,
+            Long userId
     ) {
         Specification<Property> spec = PropertySpecification.buildSpec(
-                type, query, minPrice, maxPrice, minArea, maxArea, username
+                type, purpose, query, minPrice, maxPrice, minArea, maxArea, username
         );
+        if (query != null && !query.isEmpty()) {
+            Map<String, Object> filters = new HashMap<>();
+            if (minPrice != null) filters.put("minPrice", minPrice);
+            if (maxPrice != null) filters.put("maxPrice", maxPrice);
+            if (minArea != null) filters.put("minArea", minArea);
+            if (maxArea != null) filters.put("maxArea", maxArea);
+            if (type != null && !type.isEmpty()) filters.put("type", type);
+            if (purpose != null && !purpose.isEmpty()) filters.put("purpose", purpose);
+
+            Customer customer = customerRepository.getById(userId);
+
+            SearchHistory searchHistory = new SearchHistory();
+            searchHistory.setSearchQuery(query);
+            searchHistory.setFiltersUsed(filters);
+            searchHistory.setCustomer(customer);
+
+            searchHistoryRepository.save(searchHistory);
+        }
 
         return propertyRepository.findAll(spec).stream()
                 .map(PropertyMapper::toDto)
                 .toList();
+
     }
 
 
@@ -72,6 +92,7 @@ public class PropertyService {
         Property property = new Property();
         property.setTitle(request.getTitle());
         property.setDescription(request.getDescription());
+        property.setPurpose(request.getPurpose());
         property.setPrice(request.getPrice());
         property.setArea(request.getArea());
         property.setAddress(request.getAddress());
@@ -89,6 +110,52 @@ public class PropertyService {
 
 
 
+    public String addToFavorite(Long customerId, Long propertyId) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Property not found with ID: " + propertyId));
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
+
+        boolean alreadyFavorited = favoriteRepository.existsByCustomerAndProperty(customer, property);
+        if (alreadyFavorited) {
+            return "Property '" + property.getTitle() + "' is already in favorites for customer ID " + customerId;
+        }
+
+        Favorite favorite = new Favorite();
+        favorite.setCustomer(customer);
+        favorite.setProperty(property);
+
+        favoriteRepository.save(favorite);
+
+        return "User " + customerId + " saved property '" + property.getTitle() + "' to favorites successfully.";
+    }
+
+
+    public String removeFromFavorite(Long customerId, Long favoriteId) {
+        Favorite favorite = favoriteRepository.findById(favoriteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Favorite property not found"));
+
+        if (!favorite.getCustomer().getUserId().equals(customerId)) {
+            throw new IllegalArgumentException("This favorite does not belong to the given customer");
+        }
+
+        favoriteRepository.delete(favorite);
+
+        return "Favorite with ID " + favoriteId + " has been removed successfully.";
+    }
+
+    public List<FavoritePropertiesDTO> getUserFavorites(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + customerId));
+
+        List<Favorite> favorites = favoriteRepository.findByCustomer(customer);
+
+        return favorites.stream()
+                .map(this::toDto)
+                .toList();
+    }
+
 
     public PropertyResponseDTO updateProperty(
             Long propertyId,
@@ -103,6 +170,7 @@ public class PropertyService {
 
         property.setTitle(request.getTitle());
         property.setDescription(request.getDescription());
+        property.setPurpose(request.getPurpose());
         property.setPrice(request.getPrice());
         property.setArea(request.getArea());
         property.setAddress(request.getAddress());
@@ -110,7 +178,6 @@ public class PropertyService {
         property.setLongitude(request.getLongitude());
         property.setType(PropertyType.valueOf(request.getType().toUpperCase()));
         property.setUpdatedAt(LocalDateTime.now());
-
         Property saved = propertyRepository.save(property);
         return PropertyMapper.toDto(saved);
     }
@@ -132,6 +199,7 @@ public class PropertyService {
     }
 
 
+//    by owner
     public void deletePropertyOwner(
             Long propertyId,
             Long ownerId) {
@@ -143,24 +211,20 @@ public class PropertyService {
         propertyRepository.delete(property);
     }
 
+//    by admin
     public void deletePropertyAdmin(Long propertyId) {
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
         propertyRepository.delete(property);
     }
 
+    public FavoritePropertiesDTO toDto(Favorite favorite) {
+        PropertyResponseDTO propertyDto = PropertyMapper.toDto(favorite.getProperty());
 
-
-
-
-//    // change property status
-//    public PropertyResponse changeStatus(Long id, PropertyStatus status) {
-//        Property property = propertyRepository.findById(id).orElseThrow(() -> new RuntimeException("Property not found"));
-//        property.setPropertyStatus(status);
-//        propertyRepository.save(property);
-//        return mapToDTO(property);
-//    }
-
-
+        return new FavoritePropertiesDTO(
+                favorite.getFavoriteId(),
+                propertyDto
+        );
+    }
 
 }

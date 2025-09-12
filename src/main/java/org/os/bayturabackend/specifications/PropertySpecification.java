@@ -10,6 +10,7 @@ public class PropertySpecification {
 
     public static Specification<Property> buildSpec(
             String type,
+            String purpose,
             String query,
             Double minPrice, Double maxPrice,
             Double minArea, Double maxArea,
@@ -20,6 +21,10 @@ public class PropertySpecification {
 
             if (type != null) {
                 predicates.add(cb.equal(cb.lower(root.get("type")), type.toLowerCase()));
+            }
+
+            if (purpose != null) {
+                predicates.add(cb.equal(cb.lower(root.get("purpose")), purpose.toLowerCase()));
             }
 
             if (query != null) {

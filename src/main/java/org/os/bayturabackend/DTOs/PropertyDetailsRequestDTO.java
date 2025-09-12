@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.os.bayturabackend.entities.PropertyPurpose ;
+import org.os.bayturabackend.entities.PropertyPurpose;
 
 import java.math.BigDecimal;
 
@@ -19,6 +21,9 @@ public abstract class PropertyDetailsRequestDTO {
 
     @NotBlank(message = "Type is mandatory")
     private String type;
+
+    @NotNull(message = "Purpose is mandatory")
+    private PropertyPurpose purpose;
 
     @NotBlank(message = "Description is mandatory")
     private String description;
