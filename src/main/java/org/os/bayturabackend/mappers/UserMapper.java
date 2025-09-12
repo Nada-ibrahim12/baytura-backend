@@ -1,9 +1,6 @@
 package org.os.bayturabackend.mappers;
 
-import org.os.bayturabackend.DTOs.AuthResponseDTO;
-import org.os.bayturabackend.DTOs.RegisterProviderDTO;
-import org.os.bayturabackend.DTOs.RegisterUserDTO;
-import org.os.bayturabackend.DTOs.UserResponseDTO;
+import org.os.bayturabackend.DTOs.*;
 import org.os.bayturabackend.entities.*;
 
 import org.springframework.stereotype.Component;
@@ -52,7 +49,6 @@ public class UserMapper {
                 .build();
     }
 
-
     public AuthResponseDTO toAuthResponse(User user, String token, Instant expiresAt) {
         return new AuthResponseDTO(
                 token,
@@ -63,6 +59,41 @@ public class UserMapper {
                 expiresAt
         );
     }
+
+    // ? for Customers and Admins
+    public UserResponseDTO toUserResponse(User user){
+        if (user == null) {
+            return null;
+        }
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setUsername(user.getRealUsername());
+        dto.setEmail(user.getEmail());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setPhone(user.getPhone());
+        dto.setProfilePictureUrl(user.getProfilePictureUrl());
+        dto.setRole(user.getRole().name());
+        return dto;
+    }
+
+    public ProviderResponseDTO toProviderResponse(Provider provider){
+        if (provider == null) {
+            return null;
+        }
+        ProviderResponseDTO dto = new ProviderResponseDTO();
+        dto.setUsername(provider.getRealUsername());
+        dto.setEmail(provider.getEmail());
+        dto.setFirstName(provider.getFirstName());
+        dto.setLastName(provider.getLastName());
+        dto.setPhone(provider.getPhone());
+        dto.setCompanyName(provider.getCompanyName());
+        dto.setCompanyAddress(provider.getCompanyAddress());
+        dto.setProfilePictureUrl(provider.getProfilePictureUrl());
+        dto.setRole(provider.getRole().name());
+        dto.setIsApproved(provider.getIsApproved());
+        return dto;
+    }
+
 }
 
 
