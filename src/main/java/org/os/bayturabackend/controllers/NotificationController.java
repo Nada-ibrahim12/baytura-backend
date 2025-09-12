@@ -57,7 +57,7 @@ public class NotificationController {
         Long userId = user.getUserId();
         return ResponseEntity.ok(notificationService.countUnreadNotifications(userId));
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteNotification(Authentication authentication, @PathVariable Long id) {
         User currentUser = (User) authentication.getPrincipal();

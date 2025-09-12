@@ -13,6 +13,8 @@ import org.os.bayturabackend.repositories.PropertyRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.os.bayturabackend.entities.NotificationType;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public class MediaService {
     private final MediaRepository mediaRepository;
     private final PropertyRepository propertyRepository;
     private final Cloudinary cloudinary;
+    private final NotificationService notificationService;
 
     public String uploadFile(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
@@ -59,6 +62,13 @@ public class MediaService {
 
             Media saved = mediaRepository.save(media);
 
+            notificationService.createNotification(
+                    property.getOwner().getUserId(),
+                    "Media Uploaded",
+                    "A new media file was uploaded to property: " + property.getTitle(),
+                    NotificationType.MEDIA_UPLOADED
+            );
+
             return MediaMapper.toDto(saved);
 
         }
@@ -81,6 +91,7 @@ public class MediaService {
                 .orElseThrow(() -> new RuntimeException("Media not found with id: " + mediaId));
         return MediaMapper.toDto(media);
     }
+
 
     public String deleteMedia(Long mediaId , Long ownerId , Long propertyId) {
         Media media = mediaRepository.findById(mediaId)
@@ -108,6 +119,13 @@ public class MediaService {
         }
 
         mediaRepository.delete(media);
+
+        notificationService.createNotification(
+                property.getOwner().getUserId(),
+                "Media Deleted",
+                "A media file was deleted from property: " + property.getTitle(),
+                NotificationType.MEDIA_DELETED
+        );
         return "Media deleted successfully";
     }
 }

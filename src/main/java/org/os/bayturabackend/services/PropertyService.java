@@ -25,6 +25,7 @@ public class PropertyService {
     private final SearchHistoryRepository searchHistoryRepository;
     private final CustomerRepository customerRepository;
     private final FavoriteRepository favoriteRepository;
+    private final NotificationService notificationService;
 
     public List<PropertyResponseDTO> getProperties(
             String type,
@@ -105,6 +106,14 @@ public class PropertyService {
         property.setUpdatedAt(LocalDateTime.now());
 
         Property saved = propertyRepository.save(property);
+
+        notificationService.createNotification(
+                provider.getUserId(),
+                "Property Created",
+                "Your property '" + saved.getTitle() + "' has been created successfully.",
+                NotificationType.PROPERTY_CREATED
+        );
+
         return PropertyMapper.toDto(saved);
     }
 
@@ -127,6 +136,13 @@ public class PropertyService {
         favorite.setProperty(property);
 
         favoriteRepository.save(favorite);
+
+        notificationService.createNotification(
+                property.getOwner().getUserId(),
+                "Property Favorited",
+                "Your property '" + property.getTitle() + "' was added to favorites by " + customer.getUsername(),
+                NotificationType.FAVORITE
+        );
 
         return "User " + customerId + " saved property '" + property.getTitle() + "' to favorites successfully.";
     }
@@ -179,6 +195,14 @@ public class PropertyService {
         property.setType(PropertyType.valueOf(request.getType().toUpperCase()));
         property.setUpdatedAt(LocalDateTime.now());
         Property saved = propertyRepository.save(property);
+
+        notificationService.createNotification(
+                property.getOwner().getUserId(),
+                "Property Updated",
+                "Your property '" + saved.getTitle() + "' was updated successfully.",
+                NotificationType.PROPERTY_MODIFIED
+        );
+
         return PropertyMapper.toDto(saved);
     }
 
@@ -208,6 +232,12 @@ public class PropertyService {
         if (!property.getOwner().getUserId().equals(ownerId)) {
             throw new AccessDeniedException("You are not allowed to delete this property");
         }
+        notificationService.createNotification(
+                property.getOwner().getUserId(),
+                "Property Deleted",
+                "Your property '" + property.getTitle() + "' was deleted.",
+                NotificationType.PROPERTY_DELETED
+        );
         propertyRepository.delete(property);
     }
 
@@ -216,6 +246,13 @@ public class PropertyService {
         Property property = propertyRepository.findById(propertyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
         propertyRepository.delete(property);
+
+        notificationService.createNotification(
+                property.getOwner().getUserId(),
+                "Property Deleted by Admin",
+                "Your property '" + property.getTitle() + "' was deleted by an administrator.",
+                NotificationType.PROPERTY_DELETED
+        );
     }
 
     public FavoritePropertiesDTO toDto(Favorite favorite) {

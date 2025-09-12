@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import org.os.bayturabackend.DTOs.UpdateProfileDTO;
 import org.os.bayturabackend.DTOs.UserResponseDTO;
+import org.os.bayturabackend.entities.NotificationType;
 import org.os.bayturabackend.entities.Provider;
 import org.os.bayturabackend.entities.User;
 import org.os.bayturabackend.exceptions.DuplicateResourceException;
@@ -26,6 +27,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final Cloudinary cloudinary;
+    private final NotificationService notificationService;
+
 
 
     public UserResponseDTO getProfile(Long userID){
@@ -78,6 +81,13 @@ public class UserService {
 
         userRepository.save(user);
 
+        notificationService.createNotification(
+                userId,
+                "Profile Updated",
+                "Your profile details have been successfully updated.",
+                NotificationType.PROFILE_UPDATED
+        );
+
         if (user instanceof Provider){
             return userMapper.toProviderResponse( (Provider) user);
         }
@@ -91,6 +101,13 @@ public class UserService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("User not found")
                 );
+
+        notificationService.createNotification(
+                userId,
+                "Profile Deleted",
+                "Your account has been deleted. We're sad to see you go.",
+                NotificationType.PROFILE_DELETED
+        );
         userRepository.delete(user);
     }
 
@@ -126,6 +143,13 @@ public class UserService {
             );
         }
 
+        notificationService.createNotification(
+                userId,
+                "Profile Picture Updated",
+                "Your profile picture has been changed successfully.",
+                NotificationType.PROFILE_PICTURE_UPDATED
+        );
+
         if (user instanceof Provider){
             return userMapper.toProviderResponse( (Provider) user);
         }
@@ -149,8 +173,6 @@ public class UserService {
             user.setProfilePictureUrl("https://github.com/user-attachments/assets/e4c05593-81cc-4aca-b8e6-571128095fbc");
             user.setProfilePictureId(null);
 
-            userRepository.save(user);
-
         }
         catch (IOException e) {
             throw new ResponseStatusException(
@@ -159,6 +181,14 @@ public class UserService {
                     e
             );
         }
+
+        userRepository.save(user);
+        notificationService.createNotification(
+                userId,
+                "Profile Picture Removed",
+                "Your profile picture has been deleted and replaced with the default image.",
+                NotificationType.PROFILE_PICTURE_DELETED
+        );
 
         if (user instanceof Provider){
             return userMapper.toProviderResponse( (Provider) user);

@@ -22,6 +22,7 @@ public class RequestService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final RequestMapper requestMapper;
+    private final NotificationService notificationService;
 
     public List<RequestResponseDTO> getRequestsByCustomer(Long customerId) {
         return requestRepository
@@ -63,6 +64,12 @@ public class RequestService {
         if (!Objects.equals(request.getCustomer().getUserId(), customerId)) {
             throw new ForbiddenException("You are not allowed to delete this request");
         }
+        notificationService.createNotification(
+                customerId,
+                "Request Deleted",
+                "Your request '" + request.getTitle() + "' has been deleted successfully.",
+                NotificationType.REQUEST_DELETED
+        );
 
         requestRepository.delete(request);
     }
@@ -72,6 +79,13 @@ public class RequestService {
                     .orElseThrow(
                         () -> new ResourceNotFoundException("Request not found")
                     );
+
+        notificationService.createNotification(
+                request.getCustomer().getUserId(),
+                "Request Deleted",
+                "Your request '" + request.getTitle() + "' has been deleted.",
+                NotificationType.REQUEST_DELETED
+        );
         requestRepository.delete(request);
     }
 
@@ -87,11 +101,15 @@ public class RequestService {
 
         request.setStatus(RequestStatus.PENDING);
 
-        return requestMapper
-                .toDto(
-                        requestRepository.save(request)
-                );
+        Request savedRequest = requestRepository.save(request);
+        notificationService.createNotification(
+                customerId,
+                "Request Created",
+                "Your request '" + savedRequest.getTitle() + "' has been created and is pending approval.",
+                NotificationType.REQUEST_CREATED
+        );
 
+        return requestMapper.toDto(savedRequest);
     }
 
     public RequestResponseDTO changeRequestStatus(Long requestId, String status) {
@@ -100,7 +118,7 @@ public class RequestService {
                         () -> new ResourceNotFoundException("Request not found")
                 );
 
-        if( request.getStatus() != RequestStatus.PENDING ) {
+        if (request.getStatus() != RequestStatus.PENDING) {
             throw new ForbiddenException("You are not allowed to change the status of this request");
         }
 
@@ -127,6 +145,20 @@ public class RequestService {
             property.setOwner(request.getCustomer());
 
             propertyRepository.save(property);
+
+            notificationService.createNotification(
+                    request.getCustomer().getUserId(),
+                    "Request Accepted",
+                    "Your request '" + request.getTitle() + "' has been accepted. Property is now available.",
+                    NotificationType.REQUEST_ACCEPTED
+            );
+        } else if (newStatus == RequestStatus.REJECTED) {
+            notificationService.createNotification(
+                    request.getCustomer().getUserId(),
+                    "Request Rejected",
+                    "Your request '" + request.getTitle() + "' has been rejected.",
+                    NotificationType.REQUEST_REJECTED
+            );
         }
 
         Request updatedRequest = requestRepository.save(request);

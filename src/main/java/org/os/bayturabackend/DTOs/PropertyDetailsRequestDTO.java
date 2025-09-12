@@ -7,9 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.os.bayturabackend.entities.PropertyPurpose ;
-import org.os.bayturabackend.entities.PropertyPurpose;
-
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -44,4 +43,6 @@ public abstract class PropertyDetailsRequestDTO {
 
     @NotNull(message = "Longitude is mandatory")
     private BigDecimal longitude;
+
+    private List<MediaRequest> media;
 }
