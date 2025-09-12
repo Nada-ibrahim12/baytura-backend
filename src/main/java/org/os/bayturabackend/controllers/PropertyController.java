@@ -28,22 +28,27 @@ public class PropertyController {
     @GetMapping("properties")
     public ResponseEntity<List<PropertyResponseDTO>> getProperties(
             @RequestParam(required = false) String type,
+            @RequestParam(required = false) String purpose,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minArea,
             @RequestParam(required = false) Double maxArea,
-            @RequestParam(required = false) String owner
+            @RequestParam(required = false) String owner, Authentication auth
     ) {
+        User user = (User)auth.getPrincipal();
+        Long userId = user.getUserId();
         return ResponseEntity.ok(
                 propertyService.getProperties(
                         type,
+                        purpose,
                         search,
                         minPrice,
                         maxPrice,
                         minArea,
                         maxArea,
-                        owner
+                        owner,
+                        userId
                 )
         );
     }
@@ -177,5 +182,26 @@ public class PropertyController {
         return ResponseEntity.ok("Media deleted successfully.");
     }
 
+
+//    ! =========================================================================================================================
+
+    // ? Favorite Endpoints
+
+    @PostMapping("properties/{id}/favorite")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<String> addToFavorite(Authentication authentication, @PathVariable Long id) {
+        User user = (User)authentication.getPrincipal();
+        Long customerId = user.getUserId();
+        return ResponseEntity.ok(propertyService.addToFavorite(customerId, id));
+
+    }
+
+    @DeleteMapping("properties/{id}/unfavorite")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<String> removeFromFavorite(Authentication authentication, @PathVariable Long id) {
+        User user = (User)authentication.getPrincipal();
+        Long customerId = user.getUserId();
+        return ResponseEntity.ok(propertyService.removeFromFavorite(customerId, id));
+    }
 
 }
