@@ -35,8 +35,6 @@ public class Notification {
     @Column(name = "is_read", nullable = false)
     @Builder.Default
     private Boolean isRead = false;
-    @Enumerated(EnumType.STRING)
-
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

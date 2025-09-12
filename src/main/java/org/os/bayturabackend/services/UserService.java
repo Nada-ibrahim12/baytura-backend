@@ -28,6 +28,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final Cloudinary cloudinary;
     private final NotificationService notificationService;
+    private final EmailService emailService;
 
 
 
@@ -88,6 +89,13 @@ public class UserService {
                 NotificationType.PROFILE_UPDATED
         );
 
+        String subject = "Profile Updated Successfully";
+        String content = "Hello " + user.getFirstName() + ",\n\n" +
+                "Your profile details have been successfully updated on Baytaura.\n\n" +
+                "— The Baytaura Team";
+
+        emailService.sendEmail(user.getEmail(), subject, content);
+
         if (user instanceof Provider){
             return userMapper.toProviderResponse( (Provider) user);
         }
@@ -108,6 +116,13 @@ public class UserService {
                 "Your account has been deleted. We're sad to see you go.",
                 NotificationType.PROFILE_DELETED
         );
+
+        String subject = "Account Deleted";
+        String content = "Hello " + user.getFirstName() + ",\n\n" +
+                "Your Baytaura account has been deleted. We're sad to see you leave.\n\n" +
+                "— The Baytaura Team";
+
+        emailService.sendEmail(user.getEmail(), subject, content);
         userRepository.delete(user);
     }
 
@@ -150,6 +165,13 @@ public class UserService {
                 NotificationType.PROFILE_PICTURE_UPDATED
         );
 
+        String subject = "Profile Picture Updated";
+        String content = "Hello " + user.getFirstName() + ",\n\n" +
+                "Your profile picture has been updated successfully on Baytaura.\n\n" +
+                "— The Baytaura Team";
+
+        emailService.sendEmail(user.getEmail(), subject, content);
+
         if (user instanceof Provider){
             return userMapper.toProviderResponse( (Provider) user);
         }
@@ -189,6 +211,13 @@ public class UserService {
                 "Your profile picture has been deleted and replaced with the default image.",
                 NotificationType.PROFILE_PICTURE_DELETED
         );
+
+        String subject = "Profile Picture Removed";
+        String content = "Hello " + user.getFirstName() + ",\n\n" +
+                "Your profile picture has been removed and replaced with the default image.\n\n" +
+                "— The Baytaura Team";
+
+        emailService.sendEmail(user.getEmail(), subject, content);
 
         if (user instanceof Provider){
             return userMapper.toProviderResponse( (Provider) user);

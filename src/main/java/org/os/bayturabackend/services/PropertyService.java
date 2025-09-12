@@ -26,6 +26,7 @@ public class PropertyService {
     private final CustomerRepository customerRepository;
     private final FavoriteRepository favoriteRepository;
     private final NotificationService notificationService;
+    private final EmailService emailService;
 
     public List<PropertyResponseDTO> getProperties(
             String type,
@@ -90,6 +91,8 @@ public class PropertyService {
             throw new ForbiddenException("Provider not approved to create properties");
         }
 
+        boolean isFirstProperty = propertyRepository.countByOwner(user) == 0;
+
         Property property = new Property();
         property.setTitle(request.getTitle());
         property.setDescription(request.getDescription());
@@ -113,6 +116,16 @@ public class PropertyService {
                 "Your property '" + saved.getTitle() + "' has been created successfully.",
                 NotificationType.PROPERTY_CREATED
         );
+
+        if (isFirstProperty) {
+            String subject = "Congratulations on your first property!";
+            String content = "Hi " + provider.getFirstName() + ",\n\n" +
+                    "You just created your first property: '" + saved.getTitle() + "'. " +
+                    "Start adding more properties and enjoy all the benefits of being a Baytaura provider!\n\n" +
+                    "— The Baytaura Team";
+
+            emailService.sendEmail(provider.getEmail(), subject, content);
+        }
 
         return PropertyMapper.toDto(saved);
     }

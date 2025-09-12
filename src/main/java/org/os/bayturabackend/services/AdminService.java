@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class AdminService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final EmailService emailService;
 
     public void approveProvider(Long providerId) {
         User user = userRepository.findById(providerId)
@@ -26,12 +27,24 @@ public class AdminService {
             provider.setIsApproved(true);
             userRepository.save(provider);
 
+// In-app notification
             notificationService.createNotification(
                     provider.getUserId(),
                     "Account Approved",
-                    "Congratulations! Your provider account has been approved.",
+                    "Your provider account is now approved! Start adding your first property.",
                     NotificationType.ACCOUNT_APPROVED
             );
+
+// Email notification
+            String subject = "Welcome to BAYTAURA!";
+            String content = "Hi " + provider.getFirstName() + ",\n\n" +
+                    "Good news! Your provider account has been approved. " +
+                    "You can now log in and start listing your properties on Baytaura.\n\n" +
+                    "Happy hosting!\n" +
+                    "— The Baytaura Team";
+
+            emailService.sendEmail(provider.getEmail(), subject, content);
+
         }
     }
 }
