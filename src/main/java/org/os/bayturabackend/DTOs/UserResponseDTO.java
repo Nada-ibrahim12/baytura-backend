@@ -1,7 +1,7 @@
 package org.os.bayturabackend.DTOs;
 
 import lombok.*;
-
+import lombok.Data;
 
 @Data
 @NoArgsConstructor

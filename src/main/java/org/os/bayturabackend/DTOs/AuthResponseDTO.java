@@ -3,7 +3,7 @@ package org.os.bayturabackend.DTOs;
 import lombok.*;
 
 import java.time.Instant;
-
+@Builder
 
 @Data
 @NoArgsConstructor
