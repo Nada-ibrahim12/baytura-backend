@@ -1,0 +1,376 @@
+{
+	"info": {
+		"_postman_id": "f4a10000-7174-42fb-9ce6-07affe9a4dea",
+		"name": "RequestEndpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40598717",
+		"_collection_link": "https://lunar-zodiac-258435.postman.co/workspace/BAYTURA~11584b11-54c9-4765-ae3d-a71f7cb933aa/collection/40598717-f4a10000-7174-42fb-9ce6-07affe9a4dea?action=share&source=collection_link&creator=40598717"
+	},
+	"item": [
+		{
+			"name": "Get my Requests (CUSTOMER)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/requests",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Request (CUSTOMER)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "new",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "VILLA",
+							"type": "text"
+						},
+						{
+							"key": "purpose",
+							"value": "SALE",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "mmmmmmmmmmmmmmmmmmmmm",
+							"type": "text"
+						},
+						{
+							"key": "price",
+							"value": "250000.0",
+							"type": "text"
+						},
+						{
+							"key": "area",
+							"value": "250.0",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "el sheikh zayed",
+							"type": "text"
+						},
+						{
+							"key": "latitude",
+							"value": "24.566",
+							"type": "text"
+						},
+						{
+							"key": "longitude",
+							"value": "60.24",
+							"type": "text"
+						},
+						{
+							"key": "files[0]",
+							"type": "file",
+							"src": "/D:/Nada/IMPORTANT/حاسبات.jpg"
+						},
+						{
+							"key": "altNames[0]",
+							"value": "n",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/requests",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Request By Id (CUSTOMER)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Luxury Villa\",\r\n  \"type\": \"VILLA\",\r\n  \"description\": \"Sea view, 5 bedrooms\",\r\n  \"price\": 2500000,\r\n  \"area\": 450.0,\r\n  \"address\": \"North Coast, Egypt\",\r\n  \"latitude\": 31.123456,\r\n  \"longitude\": 29.987654\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/requests/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"requests",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "48"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Request By Id (ADMIN)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Luxury Villa\",\r\n  \"type\": \"VILLA\",\r\n  \"description\": \"Sea view, 5 bedrooms\",\r\n  \"price\": 2500000,\r\n  \"area\": 450.0,\r\n  \"address\": \"North Coast, Egypt\",\r\n  \"latitude\": 31.123456,\r\n  \"longitude\": 29.987654\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/admin/requests/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"requests",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Request Status (ADMIN)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\" : \"ACCEPTED\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/admin/requests/:id/status",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"requests",
+						":id",
+						"status"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "48"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Requests (ADMIN)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\" : \"PENDING\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/admin/requests",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete my Request by Id (CUSTOMER)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{customer token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/requests/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"requests",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Request by Id (ADMIN)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\" : \"PENDING\"\r\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/admin/requests/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"requests",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
