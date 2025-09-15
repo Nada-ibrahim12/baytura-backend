@@ -8,6 +8,7 @@ import org.os.bayturabackend.DTOs.PropertyResponseDTO;
 import org.os.bayturabackend.entities.User;
 import org.os.bayturabackend.services.MediaService;
 import org.os.bayturabackend.services.PropertyService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -72,11 +73,11 @@ public class PropertyController {
 
 
     // ? provider only
-    @PostMapping("properties")
+    @PostMapping(value = "properties", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('PROVIDER')")
     public ResponseEntity<PropertyResponseDTO> createProperty(
             Authentication auth,
-            @RequestBody PropertyRequestDTO propertyRequestDTO){
+            @ModelAttribute PropertyRequestDTO propertyRequestDTO){
         User user = (User)auth.getPrincipal();
         Long OwnerId = user.getUserId();
         return ResponseEntity.ok(propertyService.createProperty(propertyRequestDTO, OwnerId));

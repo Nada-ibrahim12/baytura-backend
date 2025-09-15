@@ -16,7 +16,7 @@ public abstract class PropertyDetailsResponseDTO {
     private Long id;
     private String title;
     private String type;
-    private PropertyPurpose purpose;
+    private String purpose;
     private String description;
     private double price;
     private Double area;

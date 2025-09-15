@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.os.bayturabackend.entities.PropertyPurpose ;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public abstract class PropertyDetailsRequestDTO {
     private String type;
 
     @NotNull(message = "Purpose is mandatory")
-    private PropertyPurpose purpose;
+    private String purpose;
 
     @NotBlank(message = "Description is mandatory")
     private String description;
@@ -44,5 +46,6 @@ public abstract class PropertyDetailsRequestDTO {
     @NotNull(message = "Longitude is mandatory")
     private BigDecimal longitude;
 
-    private List<MediaRequest> media;
+    private List<MultipartFile> files;
+    private List<String> altNames;
 }

@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +97,7 @@ public class PropertyService {
         Property property = new Property();
         property.setTitle(request.getTitle());
         property.setDescription(request.getDescription());
-        property.setPurpose(request.getPurpose());
+        property.setPurpose(PropertyPurpose.valueOf(request.getPurpose().toUpperCase()));
         property.setPrice(request.getPrice());
         property.setArea(request.getArea());
         property.setAddress(request.getAddress());
@@ -107,6 +108,20 @@ public class PropertyService {
         property.setPropertyStatus(PropertyStatus.AVAILABLE);
         property.setCreatedAt(LocalDateTime.now());
         property.setUpdatedAt(LocalDateTime.now());
+
+        List<MediaRequest> mediaList = new ArrayList<>();
+        if (request.getFiles() != null) {
+            for (int i = 0; i < request.getFiles().size(); i++) {
+                MediaRequest media = new MediaRequest();
+                media.setFile(request.getFiles().get(i));
+                if (request.getAltNames() != null && i < request.getAltNames().size()) {
+                    media.setAltName(request.getAltNames().get(i));
+                }
+                mediaList.add(media);
+            }
+        }
+
+
 
         Property saved = propertyRepository.save(property);
 
@@ -199,7 +214,11 @@ public class PropertyService {
 
         property.setTitle(request.getTitle());
         property.setDescription(request.getDescription());
-        property.setPurpose(request.getPurpose());
+        if (request.getPurpose() == null) {
+            property.setPurpose(PropertyPurpose.RENT);
+        } else {
+            property.setPurpose(PropertyPurpose.valueOf(request.getPurpose().toUpperCase()));
+        }
         property.setPrice(request.getPrice());
         property.setArea(request.getArea());
         property.setAddress(request.getAddress());

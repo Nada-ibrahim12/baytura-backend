@@ -136,6 +136,10 @@ public class RequestService {
             property.setPropertyStatus(PropertyStatus.AVAILABLE);
             property.setArea(request.getArea());
             property.setPrice(request.getPrice());
+            property.setPurpose(PropertyPurpose.RENT);
+//            if (request.getPurpose() != null) {
+//
+//            }
             property.setAddress(request.getAddress());
             property.setLatitude(request.getLatitude());
             property.setLongitude(request.getLongitude());

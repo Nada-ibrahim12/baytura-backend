@@ -28,7 +28,7 @@ public abstract class PropertyDetails {
     private PropertyType type;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "purpose", nullable = false)
+    @Column(nullable = false)
     private PropertyPurpose purpose;
 
     @Column(length = 2000 ,nullable = false)
