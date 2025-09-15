@@ -3,6 +3,7 @@ package org.os.bayturabackend.mappers;
 import org.os.bayturabackend.DTOs.PropertyRequestDTO;
 import org.os.bayturabackend.DTOs.PropertyResponseDTO;
 import org.os.bayturabackend.entities.Property;
+import org.os.bayturabackend.entities.PropertyStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ public class PropertyMapper {
         dto.setId(property.getId());
         dto.setTitle(property.getTitle());
         dto.setType(property.getType().name());
+        dto.setPurpose(property.getPurpose().name());
         dto.setDescription(property.getDescription());
         dto.setPrice(property.getPrice());
         dto.setArea(property.getArea());
@@ -36,7 +38,8 @@ public class PropertyMapper {
 
         Property property = new Property();
         property.setTitle(dto.getTitle());
-        property.setType(Enum.valueOf(org.os.bayturabackend.entities.PropertyType.class, dto.getType()));
+        property.setType(Enum.valueOf(org.os.bayturabackend.entities.PropertyType.class, dto.getType().toUpperCase()));
+        property.setPurpose(Enum.valueOf(org.os.bayturabackend.entities.PropertyPurpose.class, dto.getPurpose().toUpperCase()));
         property.setDescription(dto.getDescription());
         property.setPrice(dto.getPrice());
         property.setArea(dto.getArea());
@@ -46,4 +49,5 @@ public class PropertyMapper {
 
         return property;
     }
+
 }
