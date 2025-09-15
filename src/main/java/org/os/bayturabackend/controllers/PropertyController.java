@@ -1,6 +1,7 @@
 package org.os.bayturabackend.controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.os.bayturabackend.DTOs.ChangeStatusDTO;
 import org.os.bayturabackend.DTOs.MediaResponse;
 import org.os.bayturabackend.DTOs.PropertyRequestDTO;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/")
@@ -78,6 +80,8 @@ public class PropertyController {
     public ResponseEntity<PropertyResponseDTO> createProperty(
             Authentication auth,
             @ModelAttribute PropertyRequestDTO propertyRequestDTO){
+        log.info("request DTO: {}", propertyRequestDTO.getFiles());
+
         User user = (User)auth.getPrincipal();
         Long OwnerId = user.getUserId();
         return ResponseEntity.ok(propertyService.createProperty(propertyRequestDTO, OwnerId));

@@ -36,6 +36,44 @@ public class MediaService {
         return uploadResult.get("secure_url").toString();
     }
 
+    public MediaResponse addMedia(Long propertyId, MultipartFile file, Long ownerId, String altName) {
+        try {
+            Property property = propertyRepository.findById(propertyId)
+                    .orElseThrow(() -> new RuntimeException("Property not found"));
+
+            if (!property.getOwner().getUserId().equals(ownerId)) {
+                throw new RuntimeException("You are not allowed to upload media to this property");
+            }
+
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto"));
+
+            String url = uploadResult.get("secure_url").toString();
+            String publicId = uploadResult.get("public_id").toString();
+
+            Media media = new Media();
+            media.setUrl(url);
+            media.setAltName(altName != null ? altName : file.getOriginalFilename()); // ✅ use altName if provided
+            media.setPublicId(publicId);
+            media.setPropertyDetails(property);
+
+            Media saved = mediaRepository.save(media);
+
+            notificationService.createNotification(
+                    property.getOwner().getUserId(),
+                    "Media Uploaded",
+                    "A new media file was uploaded to property: " + property.getTitle(),
+                    NotificationType.MEDIA_UPLOADED
+            );
+
+            return MediaMapper.toDto(saved);
+
+        } catch (IOException e) {
+            throw new RuntimeException("File upload failed: " + e.getMessage());
+        }
+    }
+
+
     public MediaResponse addMedia(Long propertyId, MultipartFile file , Long ownerId) {
         try {
 

@@ -63,7 +63,6 @@ public class RequestController {
             Authentication auth,
             @ModelAttribute RequestCreateDTO request
     ){
-        log.info("recieved DTO: {}", request.getPurpose());
         User user = (User)auth.getPrincipal();
         Long customerId = user.getUserId();
         return ResponseEntity.ok(

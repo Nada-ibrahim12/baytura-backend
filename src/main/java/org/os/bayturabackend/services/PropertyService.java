@@ -12,11 +12,13 @@ import org.os.bayturabackend.specifications.PropertySpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class PropertyService {
     private final FavoriteRepository favoriteRepository;
     private final NotificationService notificationService;
     private final EmailService emailService;
+    private final MediaService mediaService;
 
     public List<PropertyResponseDTO> getProperties(
             String type,
@@ -109,21 +112,21 @@ public class PropertyService {
         property.setCreatedAt(LocalDateTime.now());
         property.setUpdatedAt(LocalDateTime.now());
 
-        List<MediaRequest> mediaList = new ArrayList<>();
+        Property saved = propertyRepository.save(property);
+
+        // ✅ Save media
         if (request.getFiles() != null) {
             for (int i = 0; i < request.getFiles().size(); i++) {
-                MediaRequest media = new MediaRequest();
-                media.setFile(request.getFiles().get(i));
-                if (request.getAltNames() != null && i < request.getAltNames().size()) {
-                    media.setAltName(request.getAltNames().get(i));
+                MultipartFile file = request.getFiles().get(i);
+                String altName = (request.getAltNames() != null && i < request.getAltNames().size())
+                        ? request.getAltNames().get(i)
+                        : file.getOriginalFilename();
+
+                if (file != null && !file.isEmpty()) {
+                    mediaService.addMedia(saved.getId(), file, property.getOwner().getUserId(), altName);
                 }
-                mediaList.add(media);
             }
         }
-
-
-
-        Property saved = propertyRepository.save(property);
 
         notificationService.createNotification(
                 provider.getUserId(),
@@ -144,7 +147,6 @@ public class PropertyService {
 
         return PropertyMapper.toDto(saved);
     }
-
 
 
     public String addToFavorite(Long customerId, Long propertyId) {
