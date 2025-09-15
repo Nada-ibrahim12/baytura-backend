@@ -2,9 +2,14 @@ package org.os.bayturabackend.mappers;
 
 import org.os.bayturabackend.DTOs.RequestCreateDTO;
 import org.os.bayturabackend.DTOs.RequestResponseDTO;
+import org.os.bayturabackend.entities.Media;
 import org.os.bayturabackend.entities.PropertyPurpose;
 import org.os.bayturabackend.entities.Request;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class RequestMapper {
@@ -44,6 +49,23 @@ public class RequestMapper {
         request.setAddress(dto.getAddress());
         request.setLatitude(dto.getLatitude());
         request.setLongitude(dto.getLongitude());
+        if (dto.getFiles() != null && !dto.getFiles().isEmpty()) {
+            List<Media> mediaList = new ArrayList<>();
+            for (int i = 0; i < dto.getFiles().size(); i++) {
+                MultipartFile file = dto.getFiles().get(i);
+                if (file != null && !file.isEmpty()) {
+                    String altName = (dto.getAltNames() != null && i < dto.getAltNames().size())
+                            ? dto.getAltNames().get(i)
+                            : file.getOriginalFilename();
+
+                    Media media = new Media();
+                    media.setAltName(altName);
+                    media.setPropertyDetails(request);
+                    mediaList.add(media);
+                }
+            }
+            request.setImages(mediaList);
+        }
 
         return request;
     }

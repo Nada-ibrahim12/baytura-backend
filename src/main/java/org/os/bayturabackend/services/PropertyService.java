@@ -114,7 +114,6 @@ public class PropertyService {
 
         Property saved = propertyRepository.save(property);
 
-        // ✅ Save media
         if (request.getFiles() != null) {
             for (int i = 0; i < request.getFiles().size(); i++) {
                 MultipartFile file = request.getFiles().get(i);
