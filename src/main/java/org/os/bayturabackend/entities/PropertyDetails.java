@@ -27,6 +27,10 @@ public abstract class PropertyDetails {
     @Column(nullable = false)
     private PropertyType type;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PropertyPurpose purpose;
+
     @Column(length = 2000 ,nullable = false)
     private String description;
 

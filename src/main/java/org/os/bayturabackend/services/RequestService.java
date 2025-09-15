@@ -11,6 +11,7 @@ import org.os.bayturabackend.repositories.PropertyRepository;
 import org.os.bayturabackend.repositories.RequestRepository;
 import org.os.bayturabackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +23,8 @@ public class RequestService {
     private final PropertyRepository propertyRepository;
     private final UserRepository userRepository;
     private final RequestMapper requestMapper;
+    private final NotificationService notificationService;
+    private final MediaService mediaService;
 
     public List<RequestResponseDTO> getRequestsByCustomer(Long customerId) {
         return requestRepository
@@ -63,6 +66,12 @@ public class RequestService {
         if (!Objects.equals(request.getCustomer().getUserId(), customerId)) {
             throw new ForbiddenException("You are not allowed to delete this request");
         }
+        notificationService.createNotification(
+                customerId,
+                "Request Deleted",
+                "Your request '" + request.getTitle() + "' has been deleted successfully.",
+                NotificationType.REQUEST_DELETED
+        );
 
         requestRepository.delete(request);
     }
@@ -72,6 +81,13 @@ public class RequestService {
                     .orElseThrow(
                         () -> new ResourceNotFoundException("Request not found")
                     );
+
+        notificationService.createNotification(
+                request.getCustomer().getUserId(),
+                "Request Deleted",
+                "Your request '" + request.getTitle() + "' has been deleted.",
+                NotificationType.REQUEST_DELETED
+        );
         requestRepository.delete(request);
     }
 
@@ -87,11 +103,28 @@ public class RequestService {
 
         request.setStatus(RequestStatus.PENDING);
 
-        return requestMapper
-                .toDto(
-                        requestRepository.save(request)
-                );
+        Request savedRequest = requestRepository.save(request);
 
+        if (reqDTO.getFiles() != null) {
+            for (int i = 0; i < reqDTO.getFiles().size(); i++) {
+                MultipartFile file = reqDTO.getFiles().get(i);
+                String altName = (reqDTO.getAltNames() != null && i < reqDTO.getAltNames().size())
+                        ? reqDTO.getAltNames().get(i)
+                        : file.getOriginalFilename();
+
+                if (file != null && !file.isEmpty()) {
+                    mediaService.addMedia(savedRequest.getId(), file, savedRequest.getCustomer().getUserId(), altName);
+                }
+            }
+        }
+        notificationService.createNotification(
+                customerId,
+                "Request Created",
+                "Your request '" + savedRequest.getTitle() + "' has been created and is pending approval.",
+                NotificationType.REQUEST_CREATED
+        );
+
+        return requestMapper.toDto(savedRequest);
     }
 
     public RequestResponseDTO changeRequestStatus(Long requestId, String status) {
@@ -100,7 +133,7 @@ public class RequestService {
                         () -> new ResourceNotFoundException("Request not found")
                 );
 
-        if( request.getStatus() != RequestStatus.PENDING ) {
+        if (request.getStatus() != RequestStatus.PENDING) {
             throw new ForbiddenException("You are not allowed to change the status of this request");
         }
 
@@ -118,6 +151,10 @@ public class RequestService {
             property.setPropertyStatus(PropertyStatus.AVAILABLE);
             property.setArea(request.getArea());
             property.setPrice(request.getPrice());
+            property.setPurpose(PropertyPurpose.RENT);
+//            if (request.getPurpose() != null) {
+//
+//            }
             property.setAddress(request.getAddress());
             property.setLatitude(request.getLatitude());
             property.setLongitude(request.getLongitude());
@@ -127,6 +164,20 @@ public class RequestService {
             property.setOwner(request.getCustomer());
 
             propertyRepository.save(property);
+
+            notificationService.createNotification(
+                    request.getCustomer().getUserId(),
+                    "Request Accepted",
+                    "Your request '" + request.getTitle() + "' has been accepted. Property is now available.",
+                    NotificationType.REQUEST_ACCEPTED
+            );
+        } else if (newStatus == RequestStatus.REJECTED) {
+            notificationService.createNotification(
+                    request.getCustomer().getUserId(),
+                    "Request Rejected",
+                    "Your request '" + request.getTitle() + "' has been rejected.",
+                    NotificationType.REQUEST_REJECTED
+            );
         }
 
         Request updatedRequest = requestRepository.save(request);

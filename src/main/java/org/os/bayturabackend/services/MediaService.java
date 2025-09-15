@@ -13,6 +13,8 @@ import org.os.bayturabackend.repositories.PropertyRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.os.bayturabackend.entities.NotificationType;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,12 +28,51 @@ public class MediaService {
     private final MediaRepository mediaRepository;
     private final PropertyRepository propertyRepository;
     private final Cloudinary cloudinary;
+    private final NotificationService notificationService;
 
     public String uploadFile(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
                 ObjectUtils.asMap("resource_type", "auto"));
         return uploadResult.get("secure_url").toString();
     }
+
+    public MediaResponse addMedia(Long propertyId, MultipartFile file, Long ownerId, String altName) {
+        try {
+            Property property = propertyRepository.findById(propertyId)
+                    .orElseThrow(() -> new RuntimeException("Property not found"));
+
+            if (!property.getOwner().getUserId().equals(ownerId)) {
+                throw new RuntimeException("You are not allowed to upload media to this property");
+            }
+
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto"));
+
+            String url = uploadResult.get("secure_url").toString();
+            String publicId = uploadResult.get("public_id").toString();
+
+            Media media = new Media();
+            media.setUrl(url);
+            media.setAltName(altName != null ? altName : file.getOriginalFilename()); // ✅ use altName if provided
+            media.setPublicId(publicId);
+            media.setPropertyDetails(property);
+
+            Media saved = mediaRepository.save(media);
+
+            notificationService.createNotification(
+                    property.getOwner().getUserId(),
+                    "Media Uploaded",
+                    "A new media file was uploaded to property: " + property.getTitle(),
+                    NotificationType.MEDIA_UPLOADED
+            );
+
+            return MediaMapper.toDto(saved);
+
+        } catch (IOException e) {
+            throw new RuntimeException("File upload failed: " + e.getMessage());
+        }
+    }
+
 
     public MediaResponse addMedia(Long propertyId, MultipartFile file , Long ownerId) {
         try {
@@ -59,6 +100,13 @@ public class MediaService {
 
             Media saved = mediaRepository.save(media);
 
+            notificationService.createNotification(
+                    property.getOwner().getUserId(),
+                    "Media Uploaded",
+                    "A new media file was uploaded to property: " + property.getTitle(),
+                    NotificationType.MEDIA_UPLOADED
+            );
+
             return MediaMapper.toDto(saved);
 
         }
@@ -81,6 +129,7 @@ public class MediaService {
                 .orElseThrow(() -> new RuntimeException("Media not found with id: " + mediaId));
         return MediaMapper.toDto(media);
     }
+
 
     public String deleteMedia(Long mediaId , Long ownerId , Long propertyId) {
         Media media = mediaRepository.findById(mediaId)
@@ -108,6 +157,13 @@ public class MediaService {
         }
 
         mediaRepository.delete(media);
+
+        notificationService.createNotification(
+                property.getOwner().getUserId(),
+                "Media Deleted",
+                "A media file was deleted from property: " + property.getTitle(),
+                NotificationType.MEDIA_DELETED
+        );
         return "Media deleted successfully";
     }
 }

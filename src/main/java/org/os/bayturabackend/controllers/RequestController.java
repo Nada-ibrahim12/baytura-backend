@@ -1,11 +1,13 @@
 package org.os.bayturabackend.controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.os.bayturabackend.DTOs.ChangeStatusDTO;
 import org.os.bayturabackend.DTOs.RequestCreateDTO;
 import org.os.bayturabackend.DTOs.RequestResponseDTO;
 import org.os.bayturabackend.entities.User;
 import org.os.bayturabackend.services.RequestService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -54,11 +57,11 @@ public class RequestController {
         return ResponseEntity.ok("Request deleted successfully.");
     }
 
-    @PostMapping("/requests")
+    @PostMapping(value = "/requests", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<RequestResponseDTO> createRequest(
             Authentication auth,
-            @RequestBody RequestCreateDTO request
+            @ModelAttribute RequestCreateDTO request
     ){
         User user = (User)auth.getPrincipal();
         Long customerId = user.getUserId();

@@ -29,6 +29,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserMapper userMapper;
+    private final EmailService emailService;
 
 
     private AuthResponseDTO buildAuthResponse(User user) {
@@ -46,6 +47,12 @@ public class AuthService {
             throw new IllegalArgumentException("Username is already used");
         }
         Customer customer = userMapper.toCustomer(dto, passwordEncoder.encode(dto.getPassword()));
+
+        String subject = "Welcome to BAYTAURA!";
+        String content = "Hi " + dto.getFirstName() + ",\n\n" +
+                "Thank you for joining Baytaura! You can now explore properties and start your journey with us.\n\n" +
+                "— The Baytaura Team";
+        emailService.sendEmail(dto.getEmail(), subject, content);
         userRepository.save(customer);
         return buildAuthResponse(customer);
     }
@@ -58,6 +65,14 @@ public class AuthService {
             throw new IllegalArgumentException("Username is already used");
         }
         Provider provider = userMapper.toProvider(dto, passwordEncoder.encode(dto.getPassword()));
+
+        String subject = "Welcome to BAYTAURA!";
+        String content = "Hi " + dto.getFirstName() + ",\n\n" +
+                "Thank you for registering as a provider! Your account is pending approval. " +
+                "Once approved, you can start listing properties.\n\n" +
+                "— The Baytaura Team";
+        emailService.sendEmail(dto.getEmail(), subject, content);
+
         userRepository.save(provider);
         return buildAuthResponse(provider);
     }
