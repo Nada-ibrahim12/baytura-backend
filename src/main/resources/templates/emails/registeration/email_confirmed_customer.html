@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Email Confirmed</title>
+    <style>
+        body, table, td, a {
+            -webkit-text-size-adjust:100%;
+            -ms-text-size-adjust:100%;
+        }
+        table, td {
+            border-collapse:collapse !important;
+        }
+        body {
+            margin:0;
+            padding:0;
+            width:100% !important;
+            background-color:#F5F5F5;
+            font-family:Arial, sans-serif;
+        }
+        @media screen and (max-width:600px) {
+            .container {
+                width:100% !important;
+                margin:0 auto !important;
+            }
+            .content {
+                padding:20px !important;
+            }
+            .logo img {
+                max-width:150px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td align="center" bgcolor="#F5F5F5" style="padding: 40px 20px;">
+
+            <table class="container" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px; background-color:#FFFFFF; border-radius:8px; overflow:hidden;">
+
+                <!-- Logo -->
+                <tr>
+                    <td class="logo" align="center" bgcolor="#0b1e33" style="padding:15px;">
+                        <img src="https://res.cloudinary.com/dmxalryq9/image/upload/v1757823225/pawkro0jgaec92up7jaf.png"
+                             alt="BAYT AURA" style="display:block; max-width:250px; height:auto; color: #d0aa58; ">
+                    </td>
+                </tr>
+
+                <!-- Title -->
+                <tr>
+                    <td align="center" style="padding:35px 30px 15px; color:#000000; font-size:24px; font-weight:bold;">
+                        🎉 Welcome to <span style="color:#d0aa58;">BAYT AURA</span> 🎉
+                    </td>
+                </tr>
+
+                <!-- Main Content -->
+                <tr>
+                    <td class="content" align="center" style="padding:0 40px 25px; color:#333333; font-size:16px; line-height:26px;">
+                        Hello <strong th:text="${userName}">User</strong>,<br><br>
+                        Your email has been <strong style="color:#008000FF;">successfully confirmed</strong> and your account is now fully active! 🎉<br><br>
+                        We’re excited to have you with us at <strong style="color: #d0aa58;">BAYT AURA Real Estate</strong>, where premium properties meet seamless experiences.<br><br>
+                        You can now discover, browse, and find your dream properties with ease, right from your homepage.
+                    </td>
+                </tr>
+
+                <!-- Support Section -->
+                <tr>
+                    <td class="content" align="center" style="padding:0 40px 35px; color:#333333; font-size:16px; line-height:26px;">
+                        Need help? Our support team is just an email away.<br>
+                        We’re here to guide you whenever you need assistance.
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td bgcolor="#0b1e33" align="center"
+                        style="padding:20px; color:#FFFFFF; font-size:12px; line-height:18px;">
+                        © 2025 BAYT AURA Real Estate. All rights reserved.<br>
+                        <span style="color:#d0aa58;">Cairo, Egypt</span>
+                        <span style="font-weight: 800;" > &nbsp;|&nbsp;</span>
+                        <a href="mailto:support@baytaura.com"
+                           style="color:#d0aa58; text-decoration:none;">
+                            support@baytaura.com
+                        </a>
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
