@@ -32,7 +32,7 @@ public class UserMapper {
                 .password(encodedPassword)
                 .companyName(dto.getCompanyName())
                 .companyAddress(dto.getCompanyAddress())
-                .isApproved(false) // default value
+                .status(ProviderStatus.PENDING) // default value
                 .role(Role.PROVIDER)
                 .build();
     }
@@ -90,7 +90,7 @@ public class UserMapper {
         dto.setCompanyAddress(provider.getCompanyAddress());
         dto.setProfilePictureUrl(provider.getProfilePictureUrl());
         dto.setRole(provider.getRole().name());
-        dto.setIsApproved(provider.getIsApproved());
+        dto.setStatus(provider.getStatus().name());
         return dto;
     }
 

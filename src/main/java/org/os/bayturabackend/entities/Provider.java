@@ -22,8 +22,12 @@ public class Provider extends User{
     @Column(name = "company_address" , nullable = false)
     private String companyAddress;
 
-    @Column(name = "is_approved" , nullable = false)
-    private Boolean isApproved;
+//    @Column(name = "is_approved" , nullable = false)
+//    private Boolean isApproved;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider_status", nullable = false)
+    private ProviderStatus status = ProviderStatus.PENDING;
 
     @OneToMany(mappedBy = "owner")
     private List<Property> properties;

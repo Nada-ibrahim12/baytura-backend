@@ -12,6 +12,7 @@ import org.os.bayturabackend.repositories.RequestRepository;
 import org.os.bayturabackend.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.context.Context;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +26,7 @@ public class RequestService {
     private final RequestMapper requestMapper;
     private final NotificationService notificationService;
     private final MediaService mediaService;
+    private final EmailService emailService;
 
     public List<RequestResponseDTO> getRequestsByCustomer(Long customerId) {
         return requestRepository
@@ -165,19 +167,51 @@ public class RequestService {
 
             propertyRepository.save(property);
 
+            // ? App notification
             notificationService.createNotification(
                     request.getCustomer().getUserId(),
                     "Request Accepted",
                     "Your request '" + request.getTitle() + "' has been accepted. Property is now available.",
                     NotificationType.REQUEST_ACCEPTED
             );
-        } else if (newStatus == RequestStatus.REJECTED) {
+
+            // ? Email notification
+            Context context = new Context();
+            context.setVariable("userName", request.getCustomer().getFirstName());
+            context.setVariable("propertyTitle", property.getTitle());
+
+            emailService.sendEmailFromTemplate(
+                    request.getCustomer().getEmail(),
+                    "Your Request Has Been Accepted 🎉",
+                    "emails/request-status/request_accepted",
+                    context
+            );
+
+            System.out.println("\nEmail sent to " + request.getCustomer().getEmail());
+
+        }
+        else if (newStatus == RequestStatus.REJECTED) {
+            // ? App notification
             notificationService.createNotification(
                     request.getCustomer().getUserId(),
                     "Request Rejected",
                     "Your request '" + request.getTitle() + "' has been rejected.",
                     NotificationType.REQUEST_REJECTED
             );
+
+            // ? Email notification
+            Context context = new Context();
+            context.setVariable("userName", request.getCustomer().getFirstName());
+            context.setVariable("propertyTitle", request.getTitle());
+
+            emailService.sendEmailFromTemplate(
+                    request.getCustomer().getEmail(),
+                    "Your Request Has Been Rejected ❌",
+                    "emails/request-status/request_rejected",
+                    context
+            );
+
+            System.out.println("\nEmail sent to " + request.getCustomer().getEmail());
         }
 
         Request updatedRequest = requestRepository.save(request);

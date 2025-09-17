@@ -91,7 +91,7 @@ public class PropertyService {
         User user = userRepository.findById(ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (!(user instanceof Provider provider) || !provider.getIsApproved()) {
+        if (!(user instanceof Provider provider) || !(provider.getStatus() == ProviderStatus.ACCEPTED)) {
             throw new ForbiddenException("Provider not approved to create properties");
         }
 
