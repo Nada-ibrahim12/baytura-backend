@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -93,29 +94,27 @@ public class RequestService {
         requestRepository.delete(request);
     }
 
-    public RequestResponseDTO createNewRequest(RequestCreateDTO reqDTO , Long customerId) {
+    public RequestResponseDTO createNewRequest(RequestCreateDTO reqDTO, Long customerId) throws IOException {
         Request request = requestMapper.toEntity(reqDTO);
 
         Customer customer = (Customer) userRepository.findById(customerId)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Customer not found")
-                );
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         request.setCustomer(customer);
-
         request.setStatus(RequestStatus.PENDING);
 
         Request savedRequest = requestRepository.save(request);
 
-        if (reqDTO.getFiles() != null) {
+        if (reqDTO.getFiles() != null && !reqDTO.getFiles().isEmpty()) {
             for (int i = 0; i < reqDTO.getFiles().size(); i++) {
                 MultipartFile file = reqDTO.getFiles().get(i);
-                String altName = (reqDTO.getAltNames() != null && i < reqDTO.getAltNames().size())
-                        ? reqDTO.getAltNames().get(i)
-                        : file.getOriginalFilename();
 
                 if (file != null && !file.isEmpty()) {
-                    mediaService.addMedia(savedRequest.getId(), file, savedRequest.getCustomer().getUserId(), altName);
+                    String altName = (reqDTO.getAltNames() != null && i < reqDTO.getAltNames().size())
+                            ? reqDTO.getAltNames().get(i)
+                            : file.getOriginalFilename();
+
+                    mediaService.addMediaToRequest(savedRequest, file, altName);
                 }
             }
         }
