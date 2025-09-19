@@ -1,0 +1,126 @@
+{
+	"info": {
+		"_postman_id": "71adf6ce-0ca5-47c6-8512-c2effea34d3d",
+		"name": "AuthEndpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40598717",
+		"_collection_link": "https://lunar-zodiac-258435.postman.co/workspace/BAYTURA~11584b11-54c9-4765-ae3d-a71f7cb933aa/collection/40598717-71adf6ce-0ca5-47c6-8512-c2effea34d3d?action=share&source=collection_link&creator=40598717"
+	},
+	"item": [
+		{
+			"name": "Customer Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"nada\",\r\n  \"email\": \"nadaebrahem625@gmail.com\",\r\n  \"firstName\": \"Customer\",\r\n  \"lastName\": \"Extra\",\r\n  \"phone\": \"+201551220618\",\r\n  \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/register/customer",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "// {\r\n//   \"email\": \"nadaebrahem625@gmail.com\",\r\n//   \"password\": \"123456\"\r\n// }\r\n\r\n// {\r\n//   \"email\": \"omarribrahim2008@gmail.com\",\r\n//   \"password\": \"123456\"\r\n// }\r\n\r\n{\r\n    \"email\": \"basha@example.com\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"basha\",\r\n  \"email\": \"basha@example.com\",\r\n  \"firstName\": \"Basha\",\r\n  \"lastName\": \"El-Admin\",\r\n  \"phone\": \"+201223355667\",\r\n  \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/register/admin",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register",
+						"admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Provider Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"omar\",\r\n  \"email\": \"omarribrahim2008@gmail.com\",\r\n  \"firstName\": \"Provider\",\r\n  \"lastName\": \"El-Basha\",\r\n  \"phone\": \"+201223355667\",\r\n  \"password\": \"123456\",\r\n  \"companyName\": \"EgronX\",\r\n  \"companyAddress\": \" 5 Dr. Ahmed Zewail Street - ElDokki - Giza\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/register/provider",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register",
+						"provider"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

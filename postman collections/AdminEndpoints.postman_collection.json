@@ -1,0 +1,48 @@
+{
+	"info": {
+		"_postman_id": "8035cbdf-6b74-40ae-af98-34f478738248",
+		"name": "AdminEndpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40598717",
+		"_collection_link": "https://lunar-zodiac-258435.postman.co/workspace/BAYTURA~11584b11-54c9-4765-ae3d-a71f7cb933aa/collection/40598717-8035cbdf-6b74-40ae-af98-34f478738248?action=share&source=collection_link&creator=40598717"
+	},
+	"item": [
+		{
+			"name": "Approve provider",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/admin/provider/:id/approve",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"provider",
+						":id",
+						"approve"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "16"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
