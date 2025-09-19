@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.os.bayturabackend.entities.*;
 import org.os.bayturabackend.repositories.NotificationRepository;
 import org.os.bayturabackend.repositories.UserRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public Notification createNotification(Long userId, String title, String content, NotificationType type) {
         User user = userRepository.findById(userId)
@@ -25,7 +27,14 @@ public class NotificationService {
                 .user(user)
                 .build();
 
-        return notificationRepository.save(notification);
+        Notification saved = notificationRepository.save(notification);
+
+        messagingTemplate.convertAndSend(
+                "/queue/notifications/" + userId,
+                saved
+        );
+
+        return saved;
     }
 
     public List<Notification> getUserNotifications(Long userId) {
