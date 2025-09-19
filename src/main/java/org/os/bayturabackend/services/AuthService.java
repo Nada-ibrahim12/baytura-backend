@@ -6,16 +6,14 @@ import org.os.bayturabackend.DTOs.LoginRequestDTO;
 import org.os.bayturabackend.DTOs.RegisterProviderDTO;
 import org.os.bayturabackend.DTOs.RegisterUserDTO;
 import org.os.bayturabackend.config.JwtService;
-import org.os.bayturabackend.entities.Admin;
-import org.os.bayturabackend.entities.Customer;
-import org.os.bayturabackend.entities.Provider;
-import org.os.bayturabackend.entities.User;
+import org.os.bayturabackend.entities.*;
+import org.os.bayturabackend.exceptions.ForbiddenException;
 import org.os.bayturabackend.mappers.UserMapper;
 import org.os.bayturabackend.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -92,15 +90,26 @@ public class AuthService {
     public AuthResponseDTO login(LoginRequestDTO dto) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword())
+                    new UsernamePasswordAuthenticationToken(
+                            dto.getEmail(),
+                            dto.getPassword()
+                    )
             );
         }
-        catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Invalid credentials");
+        catch (AuthenticationException e) {
+            throw new BadCredentialsException("Invalid email or password");
         }
-        User user = userRepository.findByEmail(dto.getEmail()).orElseThrow(
-                () -> new UsernameNotFoundException("User not found with email: " + dto.getEmail())
-        );
+
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(
+                        () -> new BadCredentialsException("Invalid email or password")
+                );
+
+        if (user instanceof Provider provider && provider.getStatus() != ProviderStatus.ACCEPTED) {
+                throw new ForbiddenException("Your provider account is not approved yet.");
+        }
+
         return buildAuthResponse(user);
     }
+
 }

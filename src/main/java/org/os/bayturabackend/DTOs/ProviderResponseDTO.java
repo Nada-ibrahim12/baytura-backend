@@ -10,5 +10,5 @@ import lombok.*;
 public class ProviderResponseDTO extends UserResponseDTO {
     private String companyName;
     private String companyAddress;
-    private Boolean isApproved;
+    private String status;
 }
