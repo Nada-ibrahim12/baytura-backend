@@ -26,7 +26,6 @@ public class RequestController {
 // ! ===================================================================================================================
 
 // ? CUSTOMER
-
     @GetMapping("/requests")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<RequestResponseDTO>> getRequestsByCustomer(Authentication auth) {

@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +29,11 @@ public class RequestService {
     private final NotificationService notificationService;
     private final MediaService mediaService;
     private final EmailService emailService;
+
+    public List<RequestResponseDTO> getRequests() {
+        List<RequestResponseDTO> requests = requestRepository.findAll().stream().map(requestMapper::toDto).toList();
+        return requests;
+    }
 
     public List<RequestResponseDTO> getRequestsByCustomer(Long customerId) {
         return requestRepository

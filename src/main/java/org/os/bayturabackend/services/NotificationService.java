@@ -14,7 +14,6 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
-    private final SimpMessagingTemplate messagingTemplate;
 
     public Notification createNotification(Long userId, String title, String content, NotificationType type) {
         User user = userRepository.findById(userId)
@@ -29,10 +28,10 @@ public class NotificationService {
 
         Notification saved = notificationRepository.save(notification);
 
-        messagingTemplate.convertAndSend(
-                "/queue/notifications/" + userId,
-                saved
-        );
+//        messagingTemplate.convertAndSend(
+//                "/queue/notifications/" + userId,
+//                saved
+//        );
 
         return saved;
     }
