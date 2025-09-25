@@ -77,6 +77,7 @@ public class UserService {
     private UserResponseDTO userToDto(User user) {
         UserResponseDTO dto = new UserResponseDTO();
 
+        dto.setId(user.getUserId());
         dto.setUsername(user.getRealUsername());
         dto.setEmail(user.getEmail());
         dto.setFirstName(user.getFirstName());
@@ -94,6 +95,7 @@ public class UserService {
         Provider provider = (Provider) user;
 
         ProviderResponseDTO dto = new ProviderResponseDTO();
+        dto.setId(user.getUserId());
         dto.setUsername(provider.getRealUsername());
         dto.setEmail(provider.getEmail());
         dto.setFirstName(provider.getFirstName());

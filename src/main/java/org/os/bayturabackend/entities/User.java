@@ -83,6 +83,10 @@ public abstract class User implements UserDetails {
         }
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
 
     public abstract void setRole();
 
