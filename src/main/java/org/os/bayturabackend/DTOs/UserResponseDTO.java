@@ -8,6 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserResponseDTO extends BaseUserDTO {
+    private Long id;
     private String profilePictureUrl;
     private String role;
 }

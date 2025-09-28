@@ -3,6 +3,7 @@ package org.os.bayturabackend.services;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
+import org.os.bayturabackend.DTOs.ProviderResponseDTO;
 import org.os.bayturabackend.DTOs.UpdateProfileDTO;
 import org.os.bayturabackend.DTOs.UserResponseDTO;
 import org.os.bayturabackend.entities.NotificationType;
@@ -18,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,6 +34,83 @@ public class UserService {
     private final EmailService emailService;
 
 
+    public List<UserResponseDTO> getAllUsers(String role, String status, String companyName) {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .filter(user -> role == null || user.getRole().name().equalsIgnoreCase(role))
+
+                .filter(user -> {
+                    if (status == null) return true;
+                    if (user instanceof Provider provider) {
+                        return provider.getStatus() != null && provider.getStatus().equals(status);
+                    }
+                    return false;
+                })
+
+                .filter(user -> {
+                    if (companyName == null) return true;
+                    if (user instanceof Provider provider) {
+                        return provider.getCompanyName() != null &&
+                                provider.getCompanyName().toLowerCase().contains(companyName.toLowerCase());
+                    }
+                    return false;
+                })
+
+                .map(this::userToDto)
+                .toList();
+    }
+
+
+
+    public List<ProviderResponseDTO> getProviders() {
+        List<User> users = userRepository.findAll();
+        List<ProviderResponseDTO> providers = new ArrayList<>();
+        for (User user : users) {
+            if (user instanceof Provider) {
+                providers.add(toDto(user));
+            }
+        }
+        return providers;
+    }
+
+    private UserResponseDTO userToDto(User user) {
+        UserResponseDTO dto = new UserResponseDTO();
+
+        dto.setId(user.getUserId());
+        dto.setUsername(user.getRealUsername());
+        dto.setEmail(user.getEmail());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setPhone(user.getPhone());
+
+        dto.setProfilePictureUrl(user.getProfilePictureUrl());
+        dto.setRole(user.getRole().name());
+
+        return dto;
+    }
+
+
+    private ProviderResponseDTO toDto(User user) {
+        Provider provider = (Provider) user;
+
+        ProviderResponseDTO dto = new ProviderResponseDTO();
+        dto.setId(user.getUserId());
+        dto.setUsername(provider.getRealUsername());
+        dto.setEmail(provider.getEmail());
+        dto.setFirstName(provider.getFirstName());
+        dto.setLastName(provider.getLastName());
+        dto.setPhone(provider.getPhone());
+
+        dto.setProfilePictureUrl(provider.getProfilePictureUrl());
+        dto.setRole(provider.getRole().name());
+
+        dto.setCompanyName(provider.getCompanyName());
+        dto.setCompanyAddress(provider.getCompanyAddress());
+        dto.setStatus(String.valueOf(provider.getStatus()));
+
+        return dto;
+    }
 
     public UserResponseDTO getProfile(Long userID){
         User user = userRepository.findById(userID)

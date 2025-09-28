@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.os.bayturabackend.DTOs.MediaResponse;
 import org.os.bayturabackend.entities.Media;
 import org.os.bayturabackend.entities.Property;
+import org.os.bayturabackend.entities.Request;
 import org.os.bayturabackend.exceptions.ResourceNotFoundException;
 import org.os.bayturabackend.mappers.MediaMapper;
 import org.os.bayturabackend.repositories.MediaRepository;
 import org.os.bayturabackend.repositories.PropertyRepository;
+import org.os.bayturabackend.repositories.RequestRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,12 +31,29 @@ public class MediaService {
     private final PropertyRepository propertyRepository;
     private final Cloudinary cloudinary;
     private final NotificationService notificationService;
+    private final RequestRepository requestRepository;
 
     public String uploadFile(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
                 ObjectUtils.asMap("resource_type", "auto"));
         return uploadResult.get("secure_url").toString();
     }
+
+    public void addMediaToRequest(Request request, MultipartFile file, String altName) throws IOException {
+        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+
+        String publicId = (String) uploadResult.get("public_id");
+        String url = (String) uploadResult.get("secure_url");
+
+        Media media = new Media();
+        media.setPropertyDetails(request);
+        media.setAltName(altName);
+        media.setUrl(url);
+        media.setPublicId(publicId);
+
+        mediaRepository.save(media);
+    }
+
 
     public MediaResponse addMedia(Long propertyId, MultipartFile file, Long ownerId, String altName) {
         try {

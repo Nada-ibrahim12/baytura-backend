@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +26,6 @@ public class RequestController {
 // ! ===================================================================================================================
 
 // ? CUSTOMER
-
     @GetMapping("/requests")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<RequestResponseDTO>> getRequestsByCustomer(Authentication auth) {
@@ -62,7 +62,7 @@ public class RequestController {
     public ResponseEntity<RequestResponseDTO> createRequest(
             Authentication auth,
             @ModelAttribute RequestCreateDTO request
-    ){
+    ) throws IOException {
         User user = (User)auth.getPrincipal();
         Long customerId = user.getUserId();
         return ResponseEntity.ok(

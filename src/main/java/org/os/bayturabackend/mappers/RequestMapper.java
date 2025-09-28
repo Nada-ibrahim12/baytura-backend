@@ -49,23 +49,23 @@ public class RequestMapper {
         request.setAddress(dto.getAddress());
         request.setLatitude(dto.getLatitude());
         request.setLongitude(dto.getLongitude());
-        if (dto.getFiles() != null && !dto.getFiles().isEmpty()) {
-            List<Media> mediaList = new ArrayList<>();
-            for (int i = 0; i < dto.getFiles().size(); i++) {
-                MultipartFile file = dto.getFiles().get(i);
-                if (file != null && !file.isEmpty()) {
-                    String altName = (dto.getAltNames() != null && i < dto.getAltNames().size())
-                            ? dto.getAltNames().get(i)
-                            : file.getOriginalFilename();
-
-                    Media media = new Media();
-                    media.setAltName(altName);
-                    media.setPropertyDetails(request);
-                    mediaList.add(media);
-                }
-            }
-            request.setImages(mediaList);
-        }
+//        if (dto.getFiles() != null && !dto.getFiles().isEmpty()) {
+//            List<Media> mediaList = new ArrayList<>();
+//            for (int i = 0; i < dto.getFiles().size(); i++) {
+//                MultipartFile file = dto.getFiles().get(i);
+//                if (file != null && !file.isEmpty()) {
+//                    String altName = (dto.getAltNames() != null && i < dto.getAltNames().size())
+//                            ? dto.getAltNames().get(i)
+//                            : file.getOriginalFilename();
+//
+//                    Media media = new Media();
+//                    media.setAltName(altName);
+//                    media.setPropertyDetails(request);
+//                    mediaList.add(media);
+//                }
+//            }
+//            request.setImages(mediaList);
+//        }
 
         return request;
     }
