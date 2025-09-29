@@ -44,16 +44,18 @@ public class PropertyService {
         Specification<Property> spec = PropertySpecification.buildSpec(
                 type, purpose, query, minPrice, maxPrice, minArea, maxArea, username
         );
-        if (query != null && !query.isEmpty()) {
+        if (query != null && !query.isBlank()) {
             Map<String, Object> filters = new HashMap<>();
             if (minPrice != null) filters.put("minPrice", minPrice);
             if (maxPrice != null) filters.put("maxPrice", maxPrice);
             if (minArea != null) filters.put("minArea", minArea);
             if (maxArea != null) filters.put("maxArea", maxArea);
-            if (type != null && !type.isEmpty()) filters.put("type", type);
-            if (purpose != null && !purpose.isEmpty()) filters.put("purpose", purpose);
+            if (type != null && !type.isBlank()) filters.put("type", type);
+            if (purpose != null && !purpose.isBlank()) filters.put("purpose", purpose);
+            if (username != null && !username.isBlank()) filters.put("username", username);
 
-            Customer customer = customerRepository.getById(userId);
+            Customer customer = customerRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Customer not found"));
 
             SearchHistory searchHistory = new SearchHistory();
             searchHistory.setSearchQuery(query);

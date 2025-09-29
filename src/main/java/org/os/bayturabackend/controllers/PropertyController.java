@@ -32,7 +32,7 @@ public class PropertyController {
     public ResponseEntity<List<PropertyResponseDTO>> getProperties(
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String purpose,
-            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String searchQuery,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minArea,
@@ -45,7 +45,7 @@ public class PropertyController {
                 propertyService.getProperties(
                         type,
                         purpose,
-                        search,
+                        searchQuery,
                         minPrice,
                         maxPrice,
                         minArea,

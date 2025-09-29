@@ -27,7 +27,7 @@ public class PropertySpecification {
                 predicates.add(cb.equal(cb.lower(root.get("purpose")), purpose.toLowerCase()));
             }
 
-            if (query != null) {
+            if (query != null && !query.isBlank()) {
                 String likeQuery = "%" + query.toLowerCase() + "%";
                 predicates.add(cb.or(
                         cb.like(cb.lower(root.get("title")), likeQuery),
