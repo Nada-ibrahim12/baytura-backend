@@ -27,11 +27,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-
-//    public EmailService(JavaMailSender mailSender) {
-//        this.mailSender = mailSender;
-//    }
-
+    @Async
     public void sendEmail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
@@ -56,8 +52,6 @@ public class EmailService {
             helper.setText(htmlContent, true);
 
             mailSender.send(message);
-
-            System.out.println("\nEmail sent successfully to: " + to);
         }
         catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException("Failed to send template email", e);
