@@ -14,7 +14,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"username\": \"nada\",\r\n  \"email\": \"nadaebrahem625@gmail.com\",\r\n  \"firstName\": \"Customer\",\r\n  \"lastName\": \"Extra\",\r\n  \"phone\": \"+201551220618\",\r\n  \"password\": \"123456\"\r\n}",
+					"raw": "// {\r\n//   \"username\": \"Ephraim\",\r\n//   \"email\": \"ephraim.youssf@gmail.com\",\r\n//   \"firstName\": \"Ephraim\",\r\n//   \"lastName\": \"Youssef\",\r\n//   \"phone\": \"+201551220618\",\r\n//   \"password\": \"123456\"\r\n// }\r\n// {\r\n//   \"username\": \"kadry\",\r\n//   \"email\": \"bedokadry5@gmail.com\",\r\n//   \"firstName\": \"Bedo\",\r\n//   \"lastName\": \"Kadry\",\r\n//   \"phone\": \"+201551220618\",\r\n//   \"password\": \"123456\"\r\n// }\r\n\r\n{\r\n  \"username\": \"Nado\",\r\n  \"email\": \"nadaebrahem625@gmail.com\",\r\n  \"firstName\": \"Nada\",\r\n  \"lastName\": \"Ibrahim\",\r\n  \"phone\": \"+201551220618\",\r\n  \"password\": \"123456\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -43,7 +43,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "// {\r\n//   \"email\": \"nadaebrahem625@gmail.com\",\r\n//   \"password\": \"123456\"\r\n// }\r\n\r\n// {\r\n//   \"email\": \"omarribrahim2008@gmail.com\",\r\n//   \"password\": \"123456\"\r\n// }\r\n\r\n{\r\n    \"email\": \"basha@example.com\",\r\n    \"password\": \"123456\"\r\n}",
+					"raw": "//CUSTOMER\r\n{\r\n  \"email\": \"nadaebrahem625@gmail.com\",\r\n  \"password\": \"123456\"\r\n}\r\n\r\n// {\r\n//   \"email\": \"ephraim.youssf@gmail.com\",\r\n//   \"password\": \"123456\"\r\n// }\r\n\r\n// PROVIDER\r\n// {\r\n//   \"email\": \"seifx213@gmail.com\",\r\n//   \"password\": \"123456\"\r\n// }\r\n\r\n//ADMIN\r\n// {\r\n//     \"email\": \"basha@example.com\",\r\n//     \"password\": \"123456\"\r\n// }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -100,7 +100,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"username\": \"omar\",\r\n  \"email\": \"omarribrahim2008@gmail.com\",\r\n  \"firstName\": \"Provider\",\r\n  \"lastName\": \"El-Basha\",\r\n  \"phone\": \"+201223355667\",\r\n  \"password\": \"123456\",\r\n  \"companyName\": \"EgronX\",\r\n  \"companyAddress\": \" 5 Dr. Ahmed Zewail Street - ElDokki - Giza\"\r\n}",
+					"raw": "{\r\n  \"username\": \"seif\",\r\n  \"email\": \"seifx213@gmail.com\",\r\n  \"firstName\": \"Provider\",\r\n  \"lastName\": \"El-Basha\",\r\n  \"phone\": \"+201223355667\",\r\n  \"password\": \"123456\",\r\n  \"companyName\": \"EgronX\",\r\n  \"companyAddress\": \"5 Dr. Ahmed Zewail Street - ElDokki - Giza\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -79,6 +79,16 @@
 							"key": "altNames[0]",
 							"value": "new",
 							"type": "text"
+						},
+						{
+							"key": "files[1]",
+							"type": "file",
+							"src": "/D:/Nada/IMPORTANT/حاسبات.jpg"
+						},
+						{
+							"key": "altNames[1]",
+							"value": "yaaa",
+							"type": "text"
 						}
 					]
 				},
@@ -118,7 +128,7 @@
 					"formdata": []
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/properties",
+					"raw": "{{baseUrl}}/api/properties?type=APARTMENT&purpose=SALE&page=5&size=100",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -129,43 +139,49 @@
 					"query": [
 						{
 							"key": "type",
-							"value": null,
-							"disabled": true
+							"value": "APARTMENT"
 						},
 						{
 							"key": "purpose",
-							"value": null,
-							"disabled": true
+							"value": "SALE"
 						},
 						{
 							"key": "searchQuery",
-							"value": null,
+							"value": "apartment",
 							"disabled": true
 						},
 						{
 							"key": "minPrice",
-							"value": null,
+							"value": "",
 							"disabled": true
 						},
 						{
 							"key": "maxPrice",
-							"value": null,
+							"value": "",
 							"disabled": true
 						},
 						{
 							"key": "minArea",
-							"value": null,
+							"value": "",
 							"disabled": true
 						},
 						{
 							"key": "maxArea",
-							"value": null,
+							"value": "",
 							"disabled": true
 						},
 						{
 							"key": "owner",
-							"value": null,
+							"value": "",
 							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "5"
+						},
+						{
+							"key": "size",
+							"value": "100"
 						}
 					]
 				}
@@ -190,7 +206,7 @@
 					"variable": [
 						{
 							"key": "id",
-							"value": "44"
+							"value": "146"
 						}
 					]
 				}
@@ -234,7 +250,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUFJPVklERVIiLCJ1c2VySWQiOjEwLCJsYXN0Q3JlZGVudGlhbHNVcGRhdGUiOjE3NTcyODI4NzgsInVzZXJuYW1lIjoiUHJvdmlkZXIiLCJzdWIiOiJwcm92aWRlckBleGFtcGxlLmNvbSIsImlhdCI6MTc1NzUyOTYwMywiZXhwIjoxNzU3NjE2MDAzfQ.BcfuA8KnNo4g-KTghN8Us4bgVc3xHAytAvWaqY_IzxQ",
+							"value": "{{provider token}}",
 							"type": "string"
 						}
 					]
@@ -243,7 +259,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"Updated Luxury Apartment in Cairo\",\r\n  \"type\": \"APARTMENT\",\r\n  \"purpose\": \"SALE\",\r\n  \"description\": \"Updated description: Nile view with modern furniture.\",\r\n  \"price\": 2800000.0,\r\n  \"area\": 200.0,\r\n  \"address\": \"Zamalek, Cairo, Egypt\",\r\n  \"latitude\": 30.0656,\r\n  \"longitude\": 31.2242,\r\n  \"media\": []\r\n}\r\n",
+					"raw": "{\r\n  \"title\": \"Vill gamda awy boom ta5\",\r\n  \"type\": \"VILLA\",\r\n  \"purpose\": \"RENT\",\r\n  \"description\": \"Updated description: top\",\r\n  \"price\": 250000.0,\r\n  \"area\": 250.0,\r\n  \"address\": \"el sheikh zayed\",\r\n  \"latitude\": 24.56600000,\r\n  \"longitude\": 60.24000000,\r\n  \"media\": []\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -263,7 +279,7 @@
 					"variable": [
 						{
 							"key": "id",
-							"value": "13"
+							"value": "52"
 						}
 					]
 				}
@@ -394,7 +410,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{customer token}}",
+							"value": "{{kadryToken}}",
 							"type": "string"
 						}
 					]
@@ -415,7 +431,7 @@
 					"variable": [
 						{
 							"key": "id",
-							"value": "13"
+							"value": "52"
 						}
 					]
 				}
@@ -451,7 +467,86 @@
 					"variable": [
 						{
 							"key": "id",
-							"value": ""
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Favorits",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{evraToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user/profile/favorites",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user",
+						"profile",
+						"favorites"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "purpose",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "searchQuery",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "minPrice",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "maxPrice",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "minArea",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "maxArea",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "owner",
+							"value": null,
+							"disabled": true
 						}
 					]
 				}

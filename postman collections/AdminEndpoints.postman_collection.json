@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "Approve provider",
+			"name": "Update Provider Status ( ADMIN )",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -22,8 +22,17 @@
 				},
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"ACCEPTED\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "{{baseUrl}}/api/admin/provider/:id/approve",
+					"raw": "{{baseUrl}}/api/admin/provider/:id/status",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -32,13 +41,71 @@
 						"admin",
 						"provider",
 						":id",
-						"approve"
+						"status"
 					],
 					"variable": [
 						{
 							"key": "id",
-							"value": "16"
+							"value": "63"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Providers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/admin/provider-requests",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"provider-requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/admin/users",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"users"
 					]
 				}
 			},

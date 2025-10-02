@@ -18,7 +18,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{admin token}}",
+							"value": "{{customer token}}",
 							"type": "string"
 						}
 					]
@@ -57,7 +57,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "{{admin token}}",
+							"value": "{{provider token}}",
 							"type": "string"
 						}
 					]
@@ -65,14 +65,13 @@
 				"method": "PUT",
 				"header": [],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "file",
-							"type": "file",
-							"src": "postman-cloud:///1f08e7f9-17cc-4770-8b15-8fe50ec8173f"
+					"mode": "raw",
+					"raw": "\r\n// {\r\n//     \"username\": \"UPDATED CUSTOMER\",\r\n//     \"firstname\": \"Nada\",\r\n//     \"lastname\": \"Ibrahim\",\r\n//     \"phone\": \"+201551220618\"\r\n// }\r\n\r\n{\r\n    \"username\": \"UPDATED PROVIDER\",\r\n    \"firstname\": \"Seif\",\r\n    \"lastname\": \"Ibrahim\",\r\n    \"phone\": \"+201551220618\",\r\n    \"companyName\": \"NEW\",\r\n    \"companyAddress\": \"El Sheikh Zayed\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "{{baseUrl}}/api/user/profile",

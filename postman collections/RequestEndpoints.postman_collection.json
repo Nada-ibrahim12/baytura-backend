@@ -106,13 +106,13 @@
 							"type": "text"
 						},
 						{
-							"key": "files[0]",
+							"key": "files[1]",
 							"type": "file",
 							"src": "/D:/Nada/IMPORTANT/حاسبات.jpg"
 						},
 						{
-							"key": "altNames[0]",
-							"value": "n",
+							"key": "altNames[1]",
+							"value": "no",
 							"type": "text"
 						}
 					]
@@ -165,7 +165,7 @@
 					"variable": [
 						{
 							"key": "id",
-							"value": "48"
+							"value": "56"
 						}
 					]
 				}
