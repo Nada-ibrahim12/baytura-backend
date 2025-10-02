@@ -2,10 +2,7 @@ package org.os.bayturabackend.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.os.bayturabackend.DTOs.ChangeStatusDTO;
-import org.os.bayturabackend.DTOs.MediaResponse;
-import org.os.bayturabackend.DTOs.PropertyRequestDTO;
-import org.os.bayturabackend.DTOs.PropertyResponseDTO;
+import org.os.bayturabackend.DTOs.*;
 import org.os.bayturabackend.entities.User;
 import org.os.bayturabackend.services.MediaService;
 import org.os.bayturabackend.services.PropertyService;
@@ -29,7 +26,7 @@ public class PropertyController {
 
     // ? for all users
     @GetMapping("properties")
-    public ResponseEntity<List<PropertyResponseDTO>> getProperties(
+    public ResponseEntity<PaginatedResponse<PropertyResponseDTO>> getProperties(
             @RequestParam(required = false) String type,
             @RequestParam(required = false) String purpose,
             @RequestParam(required = false) String searchQuery,
@@ -37,21 +34,18 @@ public class PropertyController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minArea,
             @RequestParam(required = false) Double maxArea,
-            @RequestParam(required = false) String owner, Authentication auth
+            @RequestParam(required = false) String owner,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication auth
     ) {
-        User user = (User)auth.getPrincipal();
+        User user = (User) auth.getPrincipal();
         Long userId = user.getUserId();
+
         return ResponseEntity.ok(
                 propertyService.getProperties(
-                        type,
-                        purpose,
-                        searchQuery,
-                        minPrice,
-                        maxPrice,
-                        minArea,
-                        maxArea,
-                        owner,
-                        userId
+                        type, purpose, searchQuery, minPrice, maxPrice,
+                        minArea, maxArea, owner, userId, page, size
                 )
         );
     }

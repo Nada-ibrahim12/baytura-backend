@@ -13,6 +13,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,18 +37,19 @@ public class PropertyService {
     private final EmailService emailService;
     private final MediaService mediaService;
 
-    public List<PropertyResponseDTO> getProperties(
-            String type,
-            String purpose,
-            String query,
+    public PaginatedResponse<PropertyResponseDTO> getProperties(
+            String type, String purpose, String query,
             Double minPrice, Double maxPrice,
             Double minArea, Double maxArea,
-            String username,
-            Long userId
+            String username, Long userId,
+            int page, int size
     ) {
         Specification<Property> spec = PropertySpecification.buildSpec(
                 type, purpose, query, minPrice, maxPrice, minArea, maxArea, username
         );
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Property> propertyPage = propertyRepository.findAll(spec, pageable);
+
         if (query != null && !query.isBlank()) {
             Map<String, Object> filters = new HashMap<>();
             if (minPrice != null) filters.put("minPrice", minPrice);
@@ -65,9 +71,20 @@ public class PropertyService {
             searchHistoryRepository.save(searchHistory);
         }
 
-        return propertyRepository.findAll(spec).stream()
+        List<PropertyResponseDTO> properties = propertyPage.getContent()
+                .stream()
                 .map(PropertyMapper::toDto)
                 .toList();
+
+        return new PaginatedResponse<>(
+                properties,
+                propertyPage.getNumber(),
+                propertyPage.getSize(),
+                propertyPage.getTotalElements(),
+                propertyPage.getTotalPages(),
+                propertyPage.hasNext(),
+                propertyPage.hasPrevious()
+        );
 
     }
 
