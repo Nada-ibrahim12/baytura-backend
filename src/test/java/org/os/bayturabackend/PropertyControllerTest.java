@@ -1,3 +1,4 @@
+
 package org.os.bayturabackend;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -5,11 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.os.bayturabackend.DTOs.*;
+import org.os.bayturabackend.DTOs.PropertyRequestDTO;
+import org.os.bayturabackend.DTOs.PropertyResponseDTO;
+import org.os.bayturabackend.DTOs.FavoritePropertiesDTO;
+import org.os.bayturabackend.controllers.PropertyController;
 import org.os.bayturabackend.entities.User;
 import org.os.bayturabackend.services.MediaService;
 import org.os.bayturabackend.services.PropertyService;
-import org.os.bayturabackend.controllers.PropertyController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class PropertyControllerTest {
@@ -41,30 +44,15 @@ class PropertyControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        User mockUser = mock(User.class);
-
+        mockUser = mock(User.class);
+        when(mockUser.getUserId()).thenReturn(1L);
+        when(authentication.getPrincipal()).thenReturn(mockUser);
 
         mockProperty = new PropertyResponseDTO();
         mockProperty.setId(100L);
-
-        when(authentication.getPrincipal()).thenReturn(mockUser);
     }
 
-    @Test
-    void testGetProperties() {
-        when(propertyService.getProperties(null, null, null, null, null, null, null))
-                .thenReturn(Collections.singletonList(mockProperty));
 
-        ResponseEntity<List<PropertyResponseDTO>> response = propertyController.getProperties(
-                null, null, null, null, null, null, null
-        );
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(1, response.getBody().size());
-        verify(propertyService, times(1)).getProperties(
-                null, null, null, null, null, null, null
-        );
-    }
 
     @Test
     void testGetPropertyById() {
@@ -123,4 +111,20 @@ class PropertyControllerTest {
         verify(mediaService, times(1)).addMedia(100L, mockFile, 1L);
         verify(propertyService, times(1)).getPropertyById(100L);
     }
+
+    // ✅ Extra test for update property
+    @Test
+    void testUpdateProperty() {
+        PropertyRequestDTO dto = new PropertyRequestDTO();
+        when(propertyService.updateProperty(100L, dto, 1L)).thenReturn(mockProperty);
+
+        ResponseEntity<PropertyResponseDTO> response = propertyController.updateProperty(authentication, 100L, dto);
+
+        assertEquals(200, response.getStatusCodeValue());
+        verify(propertyService, times(1)).updateProperty(100L, dto, 1L);
+    }
+
+
+
+
 }

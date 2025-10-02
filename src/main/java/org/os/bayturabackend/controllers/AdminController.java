@@ -27,7 +27,7 @@ public class AdminController {
     public ResponseEntity<String> changeStatus(
             @PathVariable Long id,
             @RequestBody ChangeStatusDTO body
-        ) {
+    ) {
         adminService.changeStatus(
                 id,
                 body.getStatus()

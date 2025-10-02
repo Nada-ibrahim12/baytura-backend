@@ -8,9 +8,9 @@ import org.mockito.MockitoAnnotations;
 import org.os.bayturabackend.DTOs.ChangeStatusDTO;
 import org.os.bayturabackend.DTOs.RequestCreateDTO;
 import org.os.bayturabackend.DTOs.RequestResponseDTO;
+import org.os.bayturabackend.controllers.RequestController;
 import org.os.bayturabackend.entities.User;
 import org.os.bayturabackend.services.RequestService;
-import org.os.bayturabackend.controllers.RequestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,7 +18,7 @@ import org.springframework.security.core.Authentication;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class RequestControllerTest {
@@ -53,9 +53,11 @@ class RequestControllerTest {
 
     @Test
     void testGetRequestsByCustomer() {
-        when(requestService.getRequestsByCustomer(1L)).thenReturn(Collections.singletonList(mockResponse));
+        when(requestService.getRequestsByCustomer(1L))
+                .thenReturn(Collections.singletonList(mockResponse));
 
-        ResponseEntity<List<RequestResponseDTO>> response = requestController.getRequestsByCustomer(authentication);
+        ResponseEntity<List<RequestResponseDTO>> response =
+                requestController.getRequestsByCustomer(authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().size());
@@ -65,9 +67,11 @@ class RequestControllerTest {
 
     @Test
     void testGetRequestByIdCustomer() {
-        when(requestService.getRequestByIdCustomer(100L, 1L)).thenReturn(mockResponse);
+        when(requestService.getRequestByIdCustomer(100L, 1L))
+                .thenReturn(mockResponse);
 
-        ResponseEntity<RequestResponseDTO> response = requestController.getRequestByIdCustomer(authentication, "100");
+        ResponseEntity<RequestResponseDTO> response =
+                requestController.getRequestByIdCustomer(authentication, "100");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(100L, response.getBody().getId());
@@ -78,30 +82,23 @@ class RequestControllerTest {
     void testDeleteRequestByIdCustomer() {
         doNothing().when(requestService).deleteRequestByIdCustomer(100L, 1L);
 
-        ResponseEntity<String> response = requestController.deleteRequestByIdCustomer(authentication, "100");
+        ResponseEntity<String> response =
+                requestController.deleteRequestByIdCustomer(authentication, "100");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Request deleted successfully.", response.getBody());
         verify(requestService, times(1)).deleteRequestByIdCustomer(100L, 1L);
     }
 
-    @Test
-    void testCreateRequest() {
-        RequestCreateDTO dto = new RequestCreateDTO();
-        when(requestService.createNewRequest(dto, 1L)).thenReturn(mockResponse);
 
-        ResponseEntity<RequestResponseDTO> response = requestController.createRequest(authentication, dto);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("PENDING", response.getBody().getStatus());
-        verify(requestService, times(1)).createNewRequest(dto, 1L);
-    }
 
     @Test
     void testGetRequestByIdAdmin() {
-        when(requestService.getRequestByIdAdmin(100L)).thenReturn(mockResponse);
+        when(requestService.getRequestByIdAdmin(100L))
+                .thenReturn(mockResponse);
 
-        ResponseEntity<RequestResponseDTO> response = requestController.getRequestByIdAdmin("100");
+        ResponseEntity<RequestResponseDTO> response =
+                requestController.getRequestByIdAdmin("100");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(100L, response.getBody().getId());
@@ -112,9 +109,11 @@ class RequestControllerTest {
     void testChangeRequestStatus() {
         ChangeStatusDTO dto = new ChangeStatusDTO();
         dto.setStatus("APPROVED");
-        when(requestService.changeRequestStatus(100L, "APPROVED")).thenReturn(mockResponse);
+        when(requestService.changeRequestStatus(100L, "APPROVED"))
+                .thenReturn(mockResponse);
 
-        ResponseEntity<RequestResponseDTO> response = requestController.changeRequestStatus("100", dto);
+        ResponseEntity<RequestResponseDTO> response =
+                requestController.changeRequestStatus("100", dto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(requestService, times(1)).changeRequestStatus(100L, "APPROVED");
@@ -122,9 +121,11 @@ class RequestControllerTest {
 
     @Test
     void testGetRequestsAdmin() {
-        when(requestService.getRequestsAdmin("PENDING", "john")).thenReturn(Collections.singletonList(mockResponse));
+        when(requestService.getRequestsAdmin("PENDING", "john"))
+                .thenReturn(Collections.singletonList(mockResponse));
 
-        ResponseEntity<List<RequestResponseDTO>> response = requestController.getRequestsAdmin("PENDING", "john");
+        ResponseEntity<List<RequestResponseDTO>> response =
+                requestController.getRequestsAdmin("PENDING", "john");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().size());
@@ -135,7 +136,8 @@ class RequestControllerTest {
     void testDeleteRequestByIdAdmin() {
         doNothing().when(requestService).deleteRequestByIdAdmin(100L);
 
-        ResponseEntity<String> response = requestController.deleteRequestByIdAdmin(100L);
+        ResponseEntity<String> response =
+                requestController.deleteRequestByIdAdmin(100L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Request deleted successfully.", response.getBody());

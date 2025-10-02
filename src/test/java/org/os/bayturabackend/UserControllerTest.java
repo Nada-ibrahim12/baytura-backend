@@ -62,7 +62,8 @@ public class UserControllerTest {
 
         ResponseEntity<UserResponseDTO> response = userController.getProfile(authentication);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value()
+        );
         assertEquals("testUser", response.getBody().getUsername());
         verify(userService, times(1)).getProfile(1L);
     }
@@ -74,7 +75,8 @@ public class UserControllerTest {
 
         ResponseEntity<UserResponseDTO> response = userController.updateProfile(authentication, dto);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200,response.getStatusCode().value()
+        );
         assertEquals("testUser", response.getBody().getUsername());
         verify(userService, times(1)).updateProfile(1L, dto);
     }
@@ -85,7 +87,8 @@ public class UserControllerTest {
 
         ResponseEntity<String> response = userController.deleteProfile(authentication);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value()
+        );
         assertEquals("Profile deleted successfully.", response.getBody());
         verify(userService, times(1)).deleteProfile(1L);
     }
@@ -96,7 +99,8 @@ public class UserControllerTest {
 
         ResponseEntity<UserResponseDTO> response = userController.updateProfilePicture(authentication, multipartFile);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value()
+        );
         assertEquals("testUser", response.getBody().getUsername());
         verify(userService, times(1)).uploadPFP(1L, multipartFile);
     }
