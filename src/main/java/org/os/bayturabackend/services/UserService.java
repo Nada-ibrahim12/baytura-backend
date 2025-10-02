@@ -8,6 +8,7 @@ import org.os.bayturabackend.DTOs.UpdateProfileDTO;
 import org.os.bayturabackend.DTOs.UserResponseDTO;
 import org.os.bayturabackend.entities.NotificationType;
 import org.os.bayturabackend.entities.Provider;
+import org.os.bayturabackend.entities.ProviderStatus;
 import org.os.bayturabackend.entities.User;
 import org.os.bayturabackend.exceptions.DuplicateResourceException;
 import org.os.bayturabackend.exceptions.ResourceNotFoundException;
@@ -41,9 +42,12 @@ public class UserService {
                 .filter(user -> role == null || user.getRole().name().equalsIgnoreCase(role))
 
                 .filter(user -> {
-                    if (status == null) return true;
+                    if (status == null) {
+                        return true;
+                    }
+                    ProviderStatus providerStatus = ProviderStatus.valueOf(status.toUpperCase());
                     if (user instanceof Provider provider) {
-                        return provider.getStatus() != null && provider.getStatus().equals(status);
+                        return provider.getStatus() != null && provider.getStatus().equals(providerStatus);
                     }
                     return false;
                 })
