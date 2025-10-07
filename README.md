@@ -222,9 +222,13 @@ src/main/java/org/os/bayturabackend/
 ---
 
 ## Contributors
+
 - **Ephraim Youssef**
-  <br>[GitHub Profile](https://github.com/EphraimYoussef)
-  <br>[LinkedIn Profile](https://www.linkedin.com/in/ephraimyoussef/)
+  - [GitHub Profile](https://github.com/EphraimYoussef)
+    
+  - [LinkedIn Profile](https://www.linkedin.com/in/ephraimyoussef/)
+
 - **Nada Ibrahim**
-  <br>[GitHub Profile](https://github.com/Nada-ibrahim12)
-  <br>[LinkedIn Profile](https://www.linkedin.com/in/nada-ibrahim-70930725a)
+  - [GitHub Profile](https://github.com/Nada-ibrahim12)
+    
+  - [LinkedIn Profile](https://www.linkedin.com/in/nada-ibrahim-70930725a)
