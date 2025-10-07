@@ -46,11 +46,12 @@
 ---
 
 ## Tech Stack
-- **Backend**: Java 17, Spring Boot 2.7.0
-- **Database**: PostgreSQL
+- **Backend**: Java 21, Spring Boot 3.5.5
+- **Database**: PostgreSQL 13
+- **Object Relational Mapping**: JPA, Hibernate
 - **Authentication**: Spring Security, JWT
 - **File Storage**: Local file system
-- **Tools**: Maven, Docker, Postman
+- **Tools**: Maven, Postman
 - **Testing**: JUnit 5, Mockito
 
 ---
